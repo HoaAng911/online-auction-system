@@ -1,0 +1,14 @@
+# --- Backend (.NET) ---
+backend/bin/
+backend/obj/
+*.user
+
+# --- Frontend (React/Vite) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# --- General ---
+.vscode/
+*.log
+.DS_Store
