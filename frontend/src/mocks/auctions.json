@@ -1,0 +1,231 @@
+{
+  "note": "Dữ liệu mock đấu giá + URL ảnh mẫu (Unsplash). Chỉ dùng khi VITE_USE_MOCK=true.",
+  "categories": [
+    { "id": "cat-watch", "name": "Đồng hồ" },
+    { "id": "cat-art", "name": "Nghệ thuật" },
+    { "id": "cat-electronics", "name": "Điện tử" },
+    { "id": "cat-collectible", "name": "Sưu tầm" },
+    { "id": "cat-jewelry", "name": "Trang sức" }
+  ],
+  "auctions": [
+    {
+      "id": "a1111111-0001-4000-8000-000000000001",
+      "title": "Omega Speedmaster Professional 1969",
+      "slug": "omega-speedmaster-1969",
+      "description": "Đồng hồ Omega Speedmaster Professional, máy winding, vàng hồng, kèm hộp và giấy tờ. Tình trạng đẹp, đã bảo dưỡng 2024.",
+      "categoryId": "cat-watch",
+      "sellerId": "22222222-2222-4222-8222-222222222222",
+      "startingPrice": 45000000,
+      "currentPrice": 62500000,
+      "buyNowPrice": 90000000,
+      "bidCount": 23,
+      "condition": "Đã qua sử dụng",
+      "location": "TP.HCM",
+      "status": "Active",
+      "startsAt": "2026-09-20T02:00:00Z",
+      "endsAt": "2026-09-30T02:00:00Z",
+      "createdAt": "2026-09-18T06:30:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=1200&q=80",
+        "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1200&q=80",
+        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0002-4000-8000-000000000002",
+      "title": "Tranh sơn dầu phong cảnh Hạ Long",
+      "slug": "tranh-son-dau-ha-long",
+      "description": "Tranh sơn dầu khổ 90x120cm, tác phẩm gốc, khung gỗ óc chó. Được vẽ tay bởi hoạ sĩ trong nước.",
+      "categoryId": "cat-art",
+      "sellerId": "33333333-3333-4333-8333-333333333333",
+      "startingPrice": 8000000,
+      "currentPrice": 14500000,
+      "buyNowPrice": 25000000,
+      "bidCount": 31,
+      "condition": "Mới",
+      "location": "Hà Nội",
+      "status": "Active",
+      "startsAt": "2026-09-22T03:00:00Z",
+      "endsAt": "2026-09-29T15:00:00Z",
+      "createdAt": "2026-09-21T10:00:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=1200&q=80",
+        "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0003-4000-8000-000000000003",
+      "title": "MacBook Pro 16 inch M3 Max",
+      "slug": "macbook-pro-16-m3-max",
+      "description": "MacBook Pro 16 inch, chip M3 Max, 48GB RAM, 1TB SSD. Máy còn bảo hành Apple 10 tháng, kèm sạc zin.",
+      "categoryId": "cat-electronics",
+      "sellerId": "55555555-5555-4555-8555-555555555555",
+      "startingPrice": 55000000,
+      "currentPrice": 68200000,
+      "buyNowPrice": 75000000,
+      "bidCount": 18,
+      "condition": "Như mới",
+      "location": "Đà Nẵng",
+      "status": "Active",
+      "startsAt": "2026-09-21T01:00:00Z",
+      "endsAt": "2026-10-01T12:00:00Z",
+      "createdAt": "2026-09-20T04:15:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&q=80",
+        "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0004-4000-8000-000000000004",
+      "title": "Thẻ Pokemon Charizard Base Set 1999",
+      "slug": "pokemon-charizard-base-set-1999",
+      "description": "Thẻ Pokemon Charizard bản Base Set 1999, PSA 8. Món sưu tầm hiếm cho nhà đầu tư.",
+      "categoryId": "cat-collectible",
+      "sellerId": "22222222-2222-4222-8222-222222222222",
+      "startingPrice": 30000000,
+      "currentPrice": 47500000,
+      "buyNowPrice": null,
+      "bidCount": 42,
+      "condition": "Đã qua sử dụng",
+      "location": "TP.HCM",
+      "status": "Active",
+      "startsAt": "2026-09-19T05:00:00Z",
+      "endsAt": "2026-09-28T18:30:00Z",
+      "createdAt": "2026-09-17T08:00:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?w=1200&q=80",
+        "https://images.unsplash.com/photo-1628968434441-d9c1c66dcde7?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0005-4000-8000-000000000005",
+      "title": "Nhẫn kim cương vàng trắng 18K",
+      "slug": "nhan-kim-cuong-vang-trang-18k",
+      "description": "Nhẫn solitaire kim cương 0.7ct, nước D, vàng trắng 18K. Kèm giấy GIA.",
+      "categoryId": "cat-jewelry",
+      "sellerId": "55555555-5555-4555-8555-555555555555",
+      "startingPrice": 40000000,
+      "currentPrice": 53100000,
+      "buyNowPrice": 65000000,
+      "bidCount": 27,
+      "condition": "Mới",
+      "location": "Hà Nội",
+      "status": "Active",
+      "startsAt": "2026-09-23T00:30:00Z",
+      "endsAt": "2026-09-27T09:00:00Z",
+      "createdAt": "2026-09-22T12:45:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&q=80",
+        "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0006-4000-8000-000000000006",
+      "title": "Máy ảnh Leica M6 Classic",
+      "slug": "leica-m6-classic",
+      "description": "Leica M6 Classic, thân máy vàng, kèm lens Summicron 35mm f/2. Đã kiểm tra hoạt động tốt.",
+      "categoryId": "cat-electronics",
+      "sellerId": "33333333-3333-4333-8333-333333333333",
+      "startingPrice": 38000000,
+      "currentPrice": 39200000,
+      "buyNowPrice": 48000000,
+      "bidCount": 9,
+      "condition": "Đã qua sử dụng",
+      "location": "TP.HCM",
+      "status": "Active",
+      "startsAt": "2026-09-24T02:00:00Z",
+      "endsAt": "2026-10-03T02:00:00Z",
+      "createdAt": "2026-09-23T07:20:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?w=1200&q=80",
+        "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0007-4000-8000-000000000007",
+      "title": "Bộ tem Việt Nam 1954-1975",
+      "slug": "bo-tem-viet-nam-1954-1975",
+      "description": "Bộ sưu tập tem bưu chính Việt Nam giai đoạn 1954-1975, hơn 300 con tem nguyên bản.",
+      "categoryId": "cat-collectible",
+      "sellerId": "22222222-2222-4222-8222-222222222222",
+      "startingPrice": 5000000,
+      "currentPrice": 9200000,
+      "buyNowPrice": 15000000,
+      "bidCount": 15,
+      "condition": "Đã qua sử dụng",
+      "location": "Huế",
+      "status": "Active",
+      "startsAt": "2026-09-18T01:00:00Z",
+      "endsAt": "2026-09-26T16:00:00Z",
+      "createdAt": "2026-09-16T11:00:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0008-4000-8000-000000000008",
+      "title": "Đồng hồ Seiko Presage Automatic",
+      "slug": "seiko-presage-automatic",
+      "description": "Seiko Presage mặt dial màu xanh, automatic 4R35, dây da. Còn mới 95%.",
+      "categoryId": "cat-watch",
+      "sellerId": "55555555-5555-4555-8555-555555555555",
+      "startingPrice": 6500000,
+      "currentPrice": 8100000,
+      "buyNowPrice": 12000000,
+      "bidCount": 12,
+      "condition": "Như mới",
+      "location": "Hải Phòng",
+      "status": "Active",
+      "startsAt": "2026-09-22T04:00:00Z",
+      "endsAt": "2026-09-28T04:00:00Z",
+      "createdAt": "2026-09-21T09:30:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=1200&q=80",
+        "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0009-4000-8000-000000000009",
+      "title": "Tượng gỗ gụ chạm khắc thủ công",
+      "slug": "tuong-go-gu-cham-khac",
+      "description": "Tượng gỗ gụ chạm khắc hoa sen, cao 60cm, tác phẩm của nghệ nhân làng nghề Bắc Ninh.",
+      "categoryId": "cat-art",
+      "sellerId": "33333333-3333-4333-8333-333333333333",
+      "startingPrice": 4000000,
+      "currentPrice": 5600000,
+      "buyNowPrice": 9000000,
+      "bidCount": 7,
+      "condition": "Mới",
+      "location": "Bắc Ninh",
+      "status": "Active",
+      "startsAt": "2026-09-23T06:00:00Z",
+      "endsAt": "2026-09-27T20:00:00Z",
+      "createdAt": "2026-09-22T15:10:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "a1111111-0010-4000-8000-000000000010",
+      "title": "iPhone 15 Pro Max 256GB Titan Tự Nhiên",
+      "slug": "iphone-15-pro-max-256gb",
+      "description": "iPhone 15 Pro Max 256GB màu Titan Tự Nhiên, pin 98%, còn bảo hành hãng 6 tháng.",
+      "categoryId": "cat-electronics",
+      "sellerId": "22222222-2222-4222-8222-222222222222",
+      "startingPrice": 22000000,
+      "currentPrice": 24500000,
+      "buyNowPrice": 27000000,
+      "bidCount": 20,
+      "condition": "Như mới",
+      "location": "TP.HCM",
+      "status": "Active",
+      "startsAt": "2026-09-24T00:00:00Z",
+      "endsAt": "2026-09-30T14:00:00Z",
+      "createdAt": "2026-09-23T13:00:00Z",
+      "images": [
+        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=1200&q=80",
+        "https://images.unsplash.com/photo-1696446702183-adb4c44ecbba?w=1200&q=80"
+      ]
+    }
+  ]
+}
