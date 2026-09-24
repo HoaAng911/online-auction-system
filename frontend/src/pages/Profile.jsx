@@ -47,14 +47,14 @@ export default function Profile() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]">Tài khoản</p>
-      <h1 className="mt-2 text-[28px] font-bold text-[var(--color-text)]">Hồ sơ cá nhân</h1>
+      <p className="label-tech text-[var(--color-brand-strong)]">Tài khoản</p>
+      <h1 className="mt-2 font-[var(--font-mono)] text-[26px] font-bold uppercase tracking-tight text-[var(--color-text)]">Hồ sơ cá nhân</h1>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[320px_1fr]">
         {/* Card thông tin */}
         <div className="h-fit rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5">
           <div className="flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-[var(--color-brand)] text-[15px] font-bold text-white">
+            <div className="grid h-12 w-12 place-items-center rounded-[var(--radius-sm)] bg-[var(--color-brand)] font-[var(--font-mono)] text-[15px] font-bold text-[var(--color-on-brand)]">
               {(user?.fullName || user?.username || 'U').slice(0, 2).toUpperCase()}
             </div>
             <div>
@@ -73,12 +73,12 @@ export default function Profile() {
             </div>
             <div className="flex justify-between">
               <span className="text-[var(--color-text-dim)]">Email xác thực</span>
-              <span className={user?.isEmailVerified ? 'text-emerald-400' : 'text-amber-400'}>
+              <span className={user?.isEmailVerified ? 'text-[var(--color-text)]' : 'text-[var(--color-brand-strong)]'}>
                 {user?.isEmailVerified ? 'Đã xác thực' : 'Chưa xác thực'}
               </span>
             </div>
             {!user?.isEmailVerified && (
-              <Link to="/verify-email" className="mt-1 text-[12px] font-semibold text-[var(--color-accent)] hover:underline">
+              <Link to="/verify-email" className="mt-1 text-[12px] font-semibold text-[var(--color-brand-strong)] hover:underline">
                 Xác thực ngay →
               </Link>
             )}

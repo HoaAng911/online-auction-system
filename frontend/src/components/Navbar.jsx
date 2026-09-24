@@ -28,21 +28,21 @@ export default function Navbar() {
   const initials = (user?.fullName || user?.username || 'HN').slice(0, 2).toUpperCase()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-[var(--color-bg)]/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-[var(--color-bg)]/90 backdrop-blur-md">
       <div className="mx-auto flex h-[64px] max-w-[1320px] items-center gap-4 px-4 lg:px-6">
         {/* Logo */}
         <Link to="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] text-[14px] font-black text-[var(--color-on-brand)] shadow-[0_0_20px_-4px_var(--color-brand)]">
+          <span className="grid h-8 w-8 place-items-center rounded-[6px] bg-[var(--color-brand)] font-[var(--font-mono)] text-[14px] font-bold text-[var(--color-on-brand)]">
             A
           </span>
-          <span className="text-[15px] font-bold tracking-tight">
+          <span className="font-[var(--font-mono)] text-[14px] font-bold uppercase tracking-[0.14em]">
             <span className="text-[var(--color-text)]">AUCTION</span>
-            <span className="text-[var(--color-accent)]">.VN</span>
+            <span className="text-[var(--color-brand-strong)]">.VN</span>
           </span>
         </Link>
 
-        {/* Nav — pill kiểu Northwall */}
-        <nav className="ml-4 hidden items-center gap-1 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 p-1 text-[13px] font-medium text-[var(--color-text-muted)] md:flex">
+        {/* Nav — gạch chân gold khi active */}
+        <nav className="ml-4 hidden items-center gap-6 md:flex">
           {navLinks.map((l) =>
             l.to ? (
               <NavLink
@@ -50,16 +50,20 @@ export default function Navbar() {
                 to={l.to}
                 end={l.end}
                 className={({ isActive }) =>
-                  `rounded-full px-3.5 py-1.5 transition-colors ${isActive
-                    ? 'bg-[var(--color-brand)]/15 text-[var(--color-text)]'
-                    : 'hover:text-[var(--color-text)]'
+                  `label-tech border-b-2 pb-1 transition-colors ${isActive
+                    ? 'border-[var(--color-brand)] text-[var(--color-text)]'
+                    : 'border-transparent hover:text-[var(--color-text)]'
                   }`
                 }
               >
                 {l.label}
               </NavLink>
             ) : (
-              <a key={l.label} href={l.href} className="rounded-full px-3.5 py-1.5 transition-colors hover:text-[var(--color-text)]">
+              <a
+                key={l.label}
+                href={l.href}
+                className="label-tech border-b-2 border-transparent pb-1 transition-colors hover:text-[var(--color-text)]"
+              >
                 {l.label}
               </a>
             ),
@@ -70,35 +74,32 @@ export default function Navbar() {
           {/* Search */}
           <form
             onSubmit={onSearch}
-            className="hidden items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 px-3.5 py-1.5 transition-colors focus-within:border-[var(--color-brand)] sm:flex"
+            className="hidden items-center gap-2 border-b border-[var(--color-line-strong)] px-1 py-1.5 transition-colors focus-within:border-[var(--color-brand)] sm:flex"
           >
-            <span className="text-[var(--color-text-dim)]">⌕</span>
+            <span aria-hidden className="font-[var(--font-mono)] text-[var(--color-text-dim)]">⌕</span>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Tìm kiếm sản phẩm..."
-              className="w-[200px] bg-transparent text-[13px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-dim)]"
+              placeholder="Tìm kiếm sản phẩm…"
+              className="w-[190px] bg-transparent text-[13px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-dim)]"
             />
           </form>
 
           {/* Auth */}
           {!isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                className="hidden text-[13px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)] sm:inline"
-              >
+              <Link to="/login" className="label-tech hidden transition-colors hover:text-[var(--color-text)] sm:inline">
                 Đăng nhập
               </Link>
               <Link
                 to="/register"
-                className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[var(--color-brand-strong)]"
+                className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
               >
-                <span aria-hidden>›</span> Đăng tin
+                Đăng tin
               </Link>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Link
                 to="/me"
                 className="hidden text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)] sm:inline"
@@ -109,20 +110,20 @@ export default function Navbar() {
               {isAdmin && (
                 <Link
                   to="/admin/users"
-                  className="hidden rounded-full border border-[var(--color-line)] px-3 py-1.5 text-[12px] text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-line-strong)] hover:text-[var(--color-text)] sm:inline"
+                  className="label-tech hidden border border-[var(--color-line-strong)] px-2.5 py-1 transition-colors hover:border-[var(--color-text)] hover:text-[var(--color-text)] sm:inline"
                 >
                   Quản trị
                 </Link>
               )}
               <button
                 onClick={handleLogout}
-                className="hidden text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)] sm:inline"
+                className="label-tech hidden transition-colors hover:text-[var(--color-danger)] sm:inline"
               >
                 Đăng xuất
               </button>
               <Link
                 to="/me"
-                className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] text-[12px] font-bold text-[var(--color-on-brand)]"
+                className="grid h-8 w-8 place-items-center rounded-full border border-[var(--color-brand)] font-[var(--font-mono)] text-[11px] font-bold text-[var(--color-brand-strong)]"
               >
                 {initials}
               </Link>
@@ -132,7 +133,7 @@ export default function Navbar() {
           {/* Mobile menu */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="grid h-9 w-9 place-items-center rounded-md border border-[var(--color-line)] text-[var(--color-text-muted)] md:hidden"
+            className="grid h-9 w-9 place-items-center rounded-[6px] border border-[var(--color-line-strong)] text-[var(--color-text)] md:hidden"
             aria-label="Menu"
           >
             {open ? '✕' : '☰'}
@@ -144,55 +145,55 @@ export default function Navbar() {
         <div className="border-t border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-4 md:hidden">
           <form
             onSubmit={onSearch}
-            className="mb-4 flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 px-3.5 py-2"
+            className="mb-4 flex items-center gap-2 border-b border-[var(--color-line-strong)] px-1 py-2"
           >
-            <span className="text-[var(--color-text-dim)]">⌕</span>
+            <span aria-hidden className="font-[var(--font-mono)] text-[var(--color-text-dim)]">⌕</span>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Tìm kiếm sản phẩm..."
+              placeholder="Tìm kiếm sản phẩm…"
               className="w-full bg-transparent text-[13px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-dim)]"
             />
           </form>
-          <div className="flex flex-col gap-1 text-[14px]">
+          <div className="flex flex-col text-[14px]">
             {navLinks.map((l) =>
               l.to ? (
-                <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-[var(--color-text-muted)] hover:bg-white/5">
+                <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="border-b border-[var(--color-line)] py-3 text-[var(--color-text-muted)]">
                   {l.label}
                 </Link>
               ) : (
-                <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-[var(--color-text-muted)] hover:bg-white/5">
+                <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="border-b border-[var(--color-line)] py-3 text-[var(--color-text-muted)]">
                   {l.label}
                 </a>
               ),
             )}
             {!isAuthenticated ? (
-              <>
-                <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-[var(--color-text)]">
+              <div className="mt-4 flex flex-col gap-3">
+                <Link to="/login" onClick={() => setOpen(false)} className="text-center text-[var(--color-text)]">
                   Đăng nhập
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setOpen(false)}
-                  className="mt-1 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2.5 text-center font-semibold text-white"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2.5 text-center text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)]"
                 >
                   Đăng tin
                 </Link>
-              </>
+              </div>
             ) : (
-              <>
-                <Link to="/me" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-[var(--color-text)]">
+              <div className="mt-4 flex flex-col gap-3">
+                <Link to="/me" onClick={() => setOpen(false)} className="text-[var(--color-text)]">
                   Hồ sơ
                 </Link>
                 {isAdmin && (
-                  <Link to="/admin/users" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-[var(--color-text)]">
+                  <Link to="/admin/users" onClick={() => setOpen(false)} className="text-[var(--color-text)]">
                     Quản trị
                   </Link>
                 )}
-                <button onClick={handleLogout} className="rounded-md px-2 py-2 text-left text-[var(--color-text-muted)]">
+                <button onClick={handleLogout} className="text-left text-[var(--color-danger)]">
                   Đăng xuất
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>

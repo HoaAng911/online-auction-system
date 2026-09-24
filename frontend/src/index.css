@@ -2,56 +2,59 @@
 
 /* ============================================================
    AUCTION.VN — Design System
-   Phong cách: American editorial dark — navy đen + xanh sáng
+   Phong cách: Technical print — giấy trắng + mực đen + vàng gold
+   Một accent duy nhất (gold). Đường kẻ mảnh như bản vẽ kỹ thuật.
    ============================================================ */
 
 @theme {
-  /* --- Accent: xanh điện, sáng, "high-tech American" --- */
-  --color-brand: #3b82f6;         /* blue-500 — accent chính, sáng */
-  --color-brand-strong: #2563eb;  /* blue-600 — hover/đậm */
-  --color-brand-hover: #60a5fa;   /* blue-400 — hover sáng */
-  --color-accent: #38bdf8;        /* sky-400 — highlight cyan */
-  --color-accent-soft: #7dd3fc;   /* sky-300 — text accent trên nền tối */
+  /* --- Accent: vàng gold duy nhất --- */
+  --color-brand: #c99a2e;         /* gold — accent chính */
+  --color-brand-strong: #a97e1f;  /* gold đậm — hover */
+  --color-brand-hover: #b88a24;
+  --color-accent: #c99a2e;        /* giữ alias để không vỡ class cũ */
+  --color-accent-soft: #e6c976;   /* gold nhạt */
 
-  /* --- Nền: navy đen nhiều tầng (blue-tinted, ấm/lạnh rõ) --- */
-  --color-bg: #060a15;            /* nền trang — navy đen */
-  --color-bg-elev: #0a1020;       /* nền section nổi */
-  --color-surface: #0d1424;       /* card/panel */
-  --color-surface-2: #131c30;     /* card lồng / header */
-  --color-line: #1c2740;          /* viền tinh tế */
-  --color-line-strong: #2a3a5c;   /* viền hover */
+  /* --- Nền: giấy trắng nhiều tầng --- */
+  --color-bg: #f7f5f0;            /* nền trang — giấy ấm nhẹ */
+  --color-bg-elev: #ffffff;       /* nền section nổi */
+  --color-surface: #ffffff;       /* card/panel */
+  --color-surface-2: #efece4;     /* card lồng / header */
+  --color-line: #ddd8cc;          /* viền mảnh */
+  --color-line-strong: #c4bdae;   /* viền hover */
 
-  /* --- Tile/hero gradient (tránh hex rải rác trong component) --- */
-  --tile-1-a: #0b2a52;
-  --tile-1-b: #071b34;
-  --tile-2-a: #0a3a55;
-  --tile-2-b: #082a44;
-  --tile-3-a: #123a5e;
-  --tile-3-b: #0a2540;
+  /* --- Tile/hero: tông giấy xám, không gradient tối --- */
+  --tile-1-a: #efece4;
+  --tile-1-b: #e7e2d6;
+  --tile-2-a: #e9e5da;
+  --tile-2-b: #e0dbcd;
+  --tile-3-a: #ece7dc;
+  --tile-3-b: #e3ddcf;
 
-  /* --- Text (đồng bộ, thay cho hardcode zinc-*) --- */
-  --color-text: #e6ecf8;          /* text chính */
-  --color-text-muted: #93a1bd;    /* text phụ, label */
-  --color-text-dim: #5f6f8c;      /* text mờ, meta */
-  --color-on-brand: #04101f;      /* chữ trên nền accent sáng */
+  /* --- Text: mực in --- */
+  --color-text: #1b1916;          /* text chính — mực đen ấm */
+  --color-text-muted: #6b6558;    /* text phụ, label */
+  --color-text-dim: #96907f;      /* text mờ, meta */
+  --color-on-brand: #ffffff;      /* chữ trên nền gold */
 
   /* --- Trạng thái --- */
-  --color-success: #34d399;       /* emerald-400 */
-  --color-warning: #fbbf24;       /* amber-400 */
-  --color-danger: #f87171;        /* red-400 */
+  --color-success: #3f7d52;
+  --color-warning: #b5852a;
+  --color-danger: #b4453b;
 
-  /* --- Hình khối & bóng --- */
-  --radius: 10px;
-  --radius-sm: 8px;
-  --radius-lg: 32px;
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
-    0 12px 32px -12px rgba(0, 0, 0, 0.65);
-  --ring-focus: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  /* --- Hình khối & bóng: sắc, kỹ thuật --- */
+  --radius: 4px;
+  --radius-sm: 3px;
+  --radius-lg: 6px;
+  --shadow-card: 0 1px 0 rgba(27, 25, 22, 0.02),
+    0 10px 30px -18px rgba(27, 25, 22, 0.28);
+  --ring-focus: 0 0 0 3px rgba(201, 154, 46, 0.28);
 
-  /* --- Typography --- */
-  --font-sans: "Inter", "Manrope", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* --- Typography: mono-caps kỹ thuật --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, monospace;
 
   /* --- Motion --- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -97,15 +100,24 @@
 /* --- Base --- */
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background-color: var(--color-bg);
-  color: #e6ecf8;
+  color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Nhãn kỹ thuật: chữ hoa, giãn ký tự, mono */
+.label-tech {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
 }
 
 /* Utility nhỏ cho delay animation theo thứ tự ảnh */
@@ -119,11 +131,11 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2740;
+  background: #d6d0c2;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a3a5c;
+  background: #c4bdae;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -131,6 +143,16 @@ body {
 
 /* --- Selection --- */
 ::selection {
-  background: rgba(59, 130, 246, 0.35);
-  color: #fff;
+  background: rgba(201, 154, 46, 0.25);
+  color: var(--color-text);
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -19,11 +19,11 @@ function useCountdown(targetMs) {
   return `${h}:${m}:${s}`
 }
 
-// Ảnh minh hoạ danh mục — thay bằng ảnh thật từ backend khi có API.
+// Ô danh mục dạng "packet" — bản vẽ kỹ thuật (thay bằng ảnh thật khi có API).
 const heroTiles = [
-  { label: 'ĐIỆN TỬ', tone: 'from-[#0b2a52] via-[#071b34] to-[#04101f]' },
-  { label: 'SƯU TẦM', tone: 'from-[#0a3a55] via-[#082a44] to-[#04101f]' },
-  { label: 'XE & PHỤ KIỆN', tone: 'from-[#123a5e] via-[#0a2540] to-[#04101f]' },
+  { code: '01', label: 'ĐIỆN TỬ', meta: '028 · đang mở' },
+  { code: '02', label: 'SƯU TẦM', meta: '014 · đang mở' },
+  { code: '03', label: 'XE & PHỤ KIỆN', meta: '009 · đang mở' },
 ]
 
 const categories = [
@@ -52,69 +52,69 @@ export default function Home() {
   return (
     <div className="bg-[var(--color-bg)]">
       {/* ============================ HERO ============================ */}
-      <section className="relative overflow-hidden">
-        {/* Glow nền xanh */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-40 blur-[120px]"
-          style={{ background: 'radial-gradient(circle, var(--color-brand) 0%, transparent 65%)' }}
-        />
+      <section className="relative border-b border-[var(--color-line)]">
+        {/* Lưới bản vẽ mảnh */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.5]" style={{ backgroundImage: 'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)', backgroundSize: '56px 56px' }} />
 
-        <div className="relative mx-auto max-w-[1320px] px-4 pt-14 lg:px-6 lg:pt-20">
-          {/* Eyebrow */}
-          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-white/5 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-accent)]" />
-              Nền tảng đấu giá trực tuyến
-            </span>
+        <div className="relative mx-auto max-w-[1320px] px-4 pt-16 lg:px-6 lg:pt-24">
+          <span className="label-tech inline-flex items-center gap-2 border border-[var(--color-brand)] px-3 py-1.5 text-[var(--color-brand-strong)]">
+            <span className="h-1.5 w-1.5 bg-[var(--color-brand)]" />
+            Nền tảng đấu giá trực tuyến
+          </span>
 
-            <h1 className="mt-6 text-[42px] font-black leading-[0.98] tracking-tight text-[var(--color-text)] sm:text-[64px] lg:text-[76px]">
-              Đấu giá giá trị thật.
-              <br />
-              <span className="text-gradient">Trong tích tắc.</span>
-            </h1>
+          <h1 className="mt-6 max-w-[15ch] font-[var(--font-mono)] text-[40px] font-bold uppercase leading-[1.02] tracking-[0.01em] text-[var(--color-text)] sm:text-[64px] lg:text-[84px]">
+            Mỗi lượt đặt giá.
+            <br />
+            <span className="text-[var(--color-brand-strong)]">Một giá trị thật.</span>
+          </h1>
 
-            <p className="mt-6 max-w-[620px] text-[15px] leading-7 text-[var(--color-text-muted)]">
-              Nơi hội tụ những phiên đấu giá được tuyển chọn — giá trị thật, người bán xác thực và
-              cạnh tranh công bằng. Đặt giá chỉ trong vài giây.
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <p className="max-w-[560px] text-[15px] leading-7 text-[var(--color-text-muted)]">
+              Nơi hội tụ những phiên đấu giá được tuyển chọn — người bán xác thực, cạnh tranh công bằng,
+              và mọi lượt đặt giá đều được ghi nhận minh bạch.
             </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <Link
                 to={isAuthenticated ? '/me' : '/register'}
-                className="group inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5 hover:bg-[var(--color-brand-strong)]"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
               >
-                <span aria-hidden>›</span> Bắt đầu đấu giá
+                Bắt đầu đấu giá
               </Link>
               <a
                 href="#explore"
-                className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-6 py-3 text-[14px] font-semibold text-[var(--color-text)] transition-colors hover:border-[var(--color-brand)] hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text)] transition-colors hover:border-[var(--color-brand)] hover:text-[var(--color-brand-strong)]"
               >
                 Khám phá phiên
               </a>
             </div>
           </div>
 
-          {/* Dải 3 cột ảnh — staggered kiểu Northwall */}
-          <div className="mt-14 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:mt-20 lg:items-start">
-            {heroTiles.map((tile, i) => (
-              <div
-                key={tile.label}
-                className={`group relative h-[300px] overflow-hidden rounded-xl border border-[var(--color-line)] sm:h-[360px] lg:h-[420px] ${i === 1 ? 'lg:-mt-8 lg:h-[470px]' : ''
-                  }`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-b ${tile.tone} transition-transform duration-700 group-hover:scale-105`} />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 opacity-30"
-                  style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
-                />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-5">
-                  <span className={`text-[13px] font-semibold tracking-[0.18em] ${i === 1 ? 'text-white' : 'text-white/60'} group-hover:text-white`}>
-                    {tile.label}
+          {/* Trạng thái hệ thống */}
+          <div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-3 border-t border-dashed border-[var(--color-line-strong)] pt-5">
+            <span className="label-tech inline-flex items-center gap-2 text-[var(--color-text-dim)]">
+              <span className="h-1.5 w-1.5 bg-[var(--color-brand)]" /> Sẵn sàng
+            </span>
+            <span className="label-tech text-[var(--color-text-dim)]">PHIÊN LIÊN TỤC · 12.842</span>
+            <span className="label-tech text-[var(--color-text-dim)]">DANH MỤC · 240</span>
+            <span className="label-tech text-[var(--color-text-dim)]">NGƯỜI DÙNG · 5.2k</span>
+          </div>
+
+          {/* Ô "packet" danh mục — lưới kỹ thuật */}
+          <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-3">
+            {heroTiles.map((tile) => (
+              <div key={tile.code} className="group relative bg-[var(--color-bg)] p-6 transition-colors hover:bg-[var(--color-surface)]">
+                <svg viewBox="0 0 120 90" className="h-24 w-full text-[var(--color-brand)] opacity-30 transition-opacity group-hover:opacity-60" fill="none" stroke="currentColor" strokeWidth="1">
+                  <rect x="1" y="1" width="118" height="88" />
+                  <path d="M1 61h30l10-10h48" strokeDasharray="4 3" />
+                  <path d="M119 29h-24l-12 12H1" strokeDasharray="4 3" />
+                </svg>
+                <div className="mt-5 flex items-center justify-between">
+                  <span className="font-[var(--font-mono)] text-[13px] font-bold tracking-[0.14em] text-[var(--color-text)]">
+                    {tile.code} · {tile.label}
                   </span>
-                  <span className="text-white/40 transition-transform group-hover:translate-x-1 group-hover:text-white">→</span>
+                  <span className="text-[var(--color-brand-strong)] transition-transform group-hover:translate-x-1">→</span>
                 </div>
+                <p className="label-tech mt-2 text-[var(--color-text-dim)]">{tile.meta}</p>
               </div>
             ))}
           </div>
@@ -122,97 +122,87 @@ export default function Home() {
       </section>
 
       {/* ===================== PHIÊN NỔI BẬT ===================== */}
-      <section className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-20">
+      <section className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand">Phiên nổi bật</p>
-            <h2 className="mt-3 text-[32px] font-black leading-tight tracking-tight text-[var(--color-text)] sm:text-[40px]">
+            <p className="label-tech text-[var(--color-brand-strong)]">Phiên nổi bật</p>
+            <h2 className="mt-3 text-[30px] font-black leading-tight tracking-tight text-[var(--color-text)] sm:text-[40px]">
               Một phiên đấu giá
               <br />
               <span className="text-[var(--color-text-dim)]">đang nóng lên.</span>
             </h2>
             <p className="mt-4 max-w-[480px] text-[14px] leading-6 text-[var(--color-text-muted)]">
-              Theo dõi giá theo thời gian thực và chốt ưu thế trước khi đồng hồ kết thúc. Mọi lượt đặt giá đều được ghi nhận minh bạch.
+              Theo dõi giá theo thời gian thực và chốt ưu thế trước khi đồng hồ kết thúc.
             </p>
-            <div className="mt-6 flex gap-8">
-              <div>
-                <p className="font-mono text-[24px] font-bold text-[var(--color-text)]">98%</p>
-                <p className="text-[12px] text-[var(--color-text-dim)]">Giao dịch thành công</p>
-              </div>
-              <div>
-                <p className="font-mono text-[24px] font-bold text-[var(--color-text)]">24/7</p>
-                <p className="text-[12px] text-[var(--color-text-dim)]">Hỗ trợ trực tuyến</p>
-              </div>
-              <div>
-                <p className="font-mono text-[24px] font-bold text-[var(--color-text)]">5.2k</p>
-                <p className="text-[12px] text-[var(--color-text-dim)]">Người dùng hoạt động</p>
-              </div>
+            <div className="mt-8 grid grid-cols-3 gap-px border border-[var(--color-line)] bg-[var(--color-line)]">
+              {[['98%', 'Thành công'], ['24/7', 'Hỗ trợ'], ['5.2k', 'Người dùng']].map(([v, l]) => (
+                <div key={l} className="bg-[var(--color-bg)] px-4 py-5">
+                  <p className="font-[var(--font-mono)] text-[24px] font-bold text-[var(--color-text)]">{v}</p>
+                  <p className="label-tech mt-1 text-[var(--color-text-dim)]">{l}</p>
+                </div>
+              ))}
             </div>
             <Link
               to={isAuthenticated ? '/me' : '/register'}
-              className="mt-8 inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-5 py-3 text-[13px] font-semibold text-[var(--color-text)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              className="mt-8 inline-flex items-center gap-2 border-b-2 border-[var(--color-brand)] pb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text)] transition-colors hover:text-[var(--color-brand-strong)]"
             >
-              Tạo phiên đấu giá <span aria-hidden>→</span>
+              Tạo phiên đấu giá →
             </Link>
           </div>
 
           {/* Card phiên nổi bật */}
-          <div className="rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-bg)] p-3">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br from-[var(--tile-1-a)] via-[var(--tile-1-b)] to-[var(--color-bg)]">
-              <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--color-on-brand)]">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-on-brand)]" /> Sắp kết thúc
-              </div>
-              <div className="flex h-full items-center justify-center">
-                <div className="grid h-40 w-40 rotate-45 place-items-center border border-white/10">
-                  <div className="grid h-32 w-32 place-items-center border border-white/10">
-                    <span className="-rotate-45 text-[30px] font-black tracking-tighter text-white/25">PS5</span>
-                  </div>
+          <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-3">
+            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden border border-[var(--color-line)] bg-[var(--color-bg)]">
+              <div aria-hidden className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 bg-[var(--color-brand)] px-3 py-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-on-brand)]">
+                <span className="h-1.5 w-1.5 bg-[var(--color-on-brand)]" /> Sắp kết thúc
+              </span>
+              <div className="relative grid h-40 w-40 rotate-45 place-items-center border border-[var(--color-line-strong)]">
+                <div className="grid h-32 w-32 place-items-center border border-[var(--color-line-strong)]">
+                  <span className="-rotate-45 font-[var(--font-mono)] text-[30px] font-bold tracking-tighter text-[var(--color-brand)]">PS5</span>
                 </div>
               </div>
             </div>
             <div className="mt-3 flex items-end justify-between gap-4 px-2">
               <div>
-                <p className="text-[11px] uppercase tracking-wider text-[var(--color-text-dim)]">{featured.title} — Giá hiện tại</p>
-                <p className="mt-1 font-mono text-[22px] font-bold text-[var(--color-text)]">{formatVND(featured.price)}</p>
+                <p className="label-tech text-[var(--color-text-dim)]">{featured.title} · giá hiện tại</p>
+                <p className="mt-1 font-[var(--font-mono)] text-[22px] font-bold text-[var(--color-text)]">{formatVND(featured.price)}</p>
               </div>
               <div className="text-right">
-                <p className="text-[11px] uppercase tracking-wider text-brand">Còn lại</p>
-                <p className="mt-1 font-mono text-[20px] font-bold text-[var(--color-accent)]">{countdown}</p>
+                <p className="label-tech text-[var(--color-brand-strong)]">Còn lại</p>
+                <p className="mt-1 font-[var(--font-mono)] text-[20px] font-bold text-[var(--color-text)]">{countdown}</p>
               </div>
             </div>
             <Link
               to="/login"
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[var(--color-brand-strong)]"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
             >
-              Xem phiên đấu giá <span aria-hidden>→</span>
+              Xem phiên đấu giá →
             </Link>
           </div>
         </div>
       </section>
 
       {/* ===================== DANH MỤC ===================== */}
-      <section id="categories" className="border-y border-[var(--color-line)] bg-[var(--color-surface)]/40">
-        <div className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-20" id="explore">
+      <section id="categories" className="border-y border-[var(--color-line)] bg-[var(--color-surface)]">
+        <div className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24" id="explore">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand">Khám phá</p>
-              <h2 className="mt-3 text-[30px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Danh mục nổi bật</h2>
+              <p className="label-tech text-[var(--color-brand-strong)]">Khám phá</p>
+              <h2 className="mt-3 text-[28px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Danh mục nổi bật</h2>
             </div>
-            <p className="text-[13px] text-[var(--color-text-dim)]">Hơn 4.900 phiên đang mở</p>
+            <p className="label-tech text-[var(--color-text-dim)]">Hơn 4.900 phiên đang mở</p>
           </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-2 lg:grid-cols-4">
             {categories.map((c) => (
-              <div
-                key={c.name}
-                className="group relative overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)]/60 p-5 transition-colors hover:border-[var(--color-line-strong)]"
-              >
+              <div key={c.name} className="group bg-[var(--color-bg)] p-5 transition-colors hover:bg-[var(--color-surface)]">
                 <div className="flex items-start justify-between">
                   <p className="text-[16px] font-semibold text-[var(--color-text)]">{c.name}</p>
-                  <span className="text-[var(--color-text-dim)] transition-colors group-hover:text-[var(--color-accent)]">→</span>
+                  <span className="text-[var(--color-text-dim)] transition-colors group-hover:text-[var(--color-brand-strong)]">→</span>
                 </div>
                 <p className="mt-2 text-[12px] text-[var(--color-text-dim)]">{c.desc}</p>
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-brand">{c.count}</p>
+                <p className="label-tech mt-4 text-[var(--color-brand-strong)]">{c.count}</p>
               </div>
             ))}
           </div>
@@ -220,14 +210,14 @@ export default function Home() {
       </section>
 
       {/* ===================== CÁCH HOẠT ĐỘNG ===================== */}
-      <section id="how" className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-20">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand">Cách hoạt động</p>
-        <h2 className="mt-3 text-[30px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Từ đăng ký đến chốt giá</h2>
+      <section id="how" className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24">
+        <p className="label-tech text-[var(--color-brand-strong)]">Cách hoạt động</p>
+        <h2 className="mt-3 text-[28px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Từ đăng ký đến chốt giá</h2>
 
-        <div className="mt-8 grid gap-4 lg:grid-cols-3">
+        <div className="mt-8 grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] lg:grid-cols-3">
           {steps.map((s) => (
-            <div key={s.n} className="rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)]/60 p-6">
-              <p className="font-mono text-[12px] font-bold tracking-wider text-brand">{s.n} — {s.tag}</p>
+            <div key={s.n} className="bg-[var(--color-bg)] p-6">
+              <p className="font-[var(--font-mono)] text-[12px] font-bold tracking-[0.14em] text-[var(--color-brand-strong)]">{s.n} — {s.tag}</p>
               <h3 className="mt-3 text-[17px] font-semibold text-[var(--color-text)]">{s.title}</h3>
               <p className="mt-2 text-[13px] leading-6 text-[var(--color-text-dim)]">{s.desc}</p>
               <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
@@ -235,7 +225,7 @@ export default function Home() {
                   <Link
                     key={to}
                     to={to}
-                    className="text-[12px] font-semibold text-[var(--color-accent)] transition-colors hover:text-[var(--color-text)]"
+                    className="text-[12px] font-semibold text-[var(--color-brand-strong)] transition-colors hover:text-[var(--color-text)]"
                   >
                     {label} →
                   </Link>
@@ -247,14 +237,10 @@ export default function Home() {
       </section>
 
       {/* ===================== CTA ===================== */}
-      <section className="mx-auto max-w-[1320px] px-4 pb-20 lg:px-6">
-        <div className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-line)] bg-gradient-to-r from-[var(--tile-1-a)] to-[var(--color-bg)] px-6 py-12 text-center lg:px-16 lg:py-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full opacity-40 blur-[100px]"
-            style={{ background: 'radial-gradient(circle, var(--color-accent) 0%, transparent 65%)' }}
-          />
-          <h2 className="relative text-[28px] font-black tracking-tight text-[var(--color-text)] sm:text-[36px]">
+      <section className="mx-auto max-w-[1320px] px-4 pb-24 lg:px-6">
+        <div className="relative overflow-hidden rounded-[var(--radius)] border border-[var(--color-brand)] px-6 py-12 text-center lg:px-16 lg:py-16">
+          <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[var(--color-brand)]" />
+          <h2 className="relative text-[26px] font-black tracking-tight text-[var(--color-text)] sm:text-[36px]">
             Sẵn sàng chốt phiên tiếp theo?
           </h2>
           <p className="relative mx-auto mt-4 max-w-[520px] text-[14px] text-[var(--color-text-muted)]">
@@ -262,9 +248,9 @@ export default function Home() {
           </p>
           <Link
             to={isAuthenticated ? '/me' : '/register'}
-            className="relative mt-8 inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[14px] font-semibold text-white transition-transform hover:-translate-y-0.5 hover:bg-[var(--color-brand-strong)]"
+            className="relative mt-8 inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
           >
-            <span aria-hidden>›</span> {isAuthenticated ? 'Vào hồ sơ của tôi' : 'Đăng ký miễn phí'}
+            {isAuthenticated ? 'Vào hồ sơ của tôi' : 'Đăng ký miễn phí'}
           </Link>
         </div>
       </section>

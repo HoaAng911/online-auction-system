@@ -147,9 +147,9 @@ export default function Auth({ mode }) {
   }
 
   const inputBase =
-    'h-14 w-full rounded-[var(--radius)] bg-[var(--color-bg-elev)] pl-12 pr-4 text-[15px] text-[var(--color-text)] placeholder-[var(--color-text-dim)] outline-none ring-1 ring-inset ring-[var(--color-line)] transition focus:bg-[var(--color-surface-2)] focus:ring-2 focus:ring-[var(--color-brand)]/60'
+    'h-12 w-full rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] pl-11 pr-4 text-[14px] text-[var(--color-text)] placeholder-[var(--color-text-dim)] outline-none transition focus:border-[var(--color-brand)] focus:ring-2 focus:ring-[var(--color-brand)]/30'
   const iconClass =
-    'pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--color-text-dim)]'
+    'pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--color-text-dim)]'
 
   // Panel ảnh trượt sang phải khi ở Register, sang trái khi ở Login (desktop)
   const imageOrder = isLogin ? 'lg:order-2' : 'lg:order-1'
@@ -159,15 +159,21 @@ export default function Auth({ mode }) {
 
   return (
     <div className="relative flex min-h-[100dvh] items-center justify-center bg-[var(--color-bg)] px-4 py-10">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-[var(--color-brand)]/20 blur-[120px]" />
-        <div className="absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-[var(--color-accent)]/15 blur-[140px]" />
-      </div>
+      {/* Lưới bản vẽ mảnh */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.5]"
+        style={{
+          backgroundImage:
+            'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)',
+          backgroundSize: '56px 56px',
+        }}
+      />
 
-      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-surface)] shadow-[var(--shadow-card)] ring-1 ring-[var(--color-line)] lg:grid-cols-2">
-        {/* Panel ảnh */}
-        <div className={`relative order-1 p-3 sm:p-4 ${imageOrder}`}>
-          <div className="relative h-56 w-full overflow-hidden rounded-[24px] lg:h-full lg:min-h-[560px]">
+      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] lg:grid-cols-2">
+        {/* Panel ảnh — bọc khung kỹ thuật + viền vàng */}
+        <div className={`relative order-1 p-4 sm:p-5 ${imageOrder}`}>
+          <div className="relative h-56 w-full overflow-hidden border border-[var(--color-line)] lg:h-full lg:min-h-[540px]">
             <img
               key={animKey}
               src={sideImage}
@@ -175,12 +181,13 @@ export default function Auth({ mode }) {
               className="h-full w-full object-cover"
               style={{ animation: 'auth-fade-swap 0.7s var(--ease-out-expo) both' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-bg)]/70 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 text-white">
-              <p className="font-[var(--font-display)] text-2xl font-semibold text-white drop-shadow">
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)]/85 via-[var(--color-ink)]/30 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <span className="label-tech text-[var(--color-brand-strong)]">Auction.vn</span>
+              <p className="mt-2 font-[var(--font-mono)] text-[22px] font-bold uppercase leading-tight tracking-tight text-[var(--color-paper)]">
                 {isLogin ? 'Chào mừng trở lại' : 'Tham gia cộng đồng'}
               </p>
-              <p className="mt-1 max-w-xs text-sm text-white/80">
+              <p className="mt-2 max-w-xs text-[13px] leading-6 text-[var(--color-paper)]/75">
                 {isLogin
                   ? 'Đăng nhập để tiếp tục đấu giá và theo dõi các phiên yêu thích.'
                   : 'Tạo tài khoản để bắt đầu đặt giá và sở hữu những món đồ độc đáo.'}
@@ -196,13 +203,16 @@ export default function Auth({ mode }) {
             className="mx-auto flex h-full max-w-sm flex-col justify-center"
             style={{ animation: `${animName} 0.55s var(--ease-out-expo) both` }}
           >
-            <h1 className="font-[var(--font-display)] text-4xl font-extrabold tracking-tight text-[var(--color-text)]">
-              {isLogin ? 'Welcome' : 'Create account'}
+            <span className="label-tech text-[var(--color-brand-strong)]">
+              {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+            </span>
+            <h1 className="mt-3 font-[var(--font-mono)] text-[30px] font-bold uppercase leading-tight tracking-tight text-[var(--color-text)]">
+              {isLogin ? 'Chào mừng trở lại' : 'Tạo tài khoản'}
             </h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
               {isLogin
-                ? 'We are glad to see you back with us'
-                : 'Một vài thông tin để bắt đầu hành trình đấu giá'}
+                ? 'Nhập thông tin để tiếp tục phiên đấu giá của bạn.'
+                : 'Một vài thông tin để bắt đầu hành trình đấu giá.'}
             </p>
 
             <form onSubmit={onSubmit} className="mt-7 flex flex-col gap-3.5">
@@ -284,9 +294,9 @@ export default function Auth({ mode }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-2 inline-flex h-14 w-full items-center justify-center gap-2 rounded-[var(--radius)] bg-[var(--color-brand)] text-[15px] font-semibold text-white transition hover:bg-[var(--color-brand-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-strong)] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {loading ? 'Đang xử lý...' : isLogin ? 'Login' : 'Đăng ký'}
+                {loading ? 'Đang xử lý...' : isLogin ? 'Đăng nhập' : 'Đăng ký'}
                 {!loading && <IconArrow className="h-[18px] w-[18px]" />}
               </button>
             </form>
@@ -294,25 +304,25 @@ export default function Auth({ mode }) {
             {/* Social — chỉ hiện ở Login như ảnh mẫu */}
             {isLogin && (
               <>
-                <div className="my-6 flex items-center gap-4 text-xs font-medium text-[var(--color-text-dim)]">
+                <div className="my-6 flex items-center gap-4">
                   <span className="h-px flex-1 bg-[var(--color-line)]" />
-                  Login with Others
+                  <span className="label-tech text-[var(--color-text-dim)]">Hoặc tiếp tục với</span>
                   <span className="h-px flex-1 bg-[var(--color-line)]" />
                 </div>
                 <div className="flex flex-col gap-3">
                   <button
                     type="button"
-                    className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-[var(--radius)] bg-[var(--color-bg-elev)] text-sm font-medium text-[var(--color-text)] ring-1 ring-inset ring-[var(--color-line)] transition hover:bg-[var(--color-surface-2)]"
+                    className="inline-flex h-11 w-full items-center justify-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text)] transition hover:border-[var(--color-brand)]"
                   >
                     <IconGoogle className="h-5 w-5" />
-                    Login with <span className="font-semibold">Google</span>
+                    Tiếp tục với <span className="font-semibold">Google</span>
                   </button>
                   <button
                     type="button"
-                    className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-[var(--radius)] bg-[var(--color-bg-elev)] text-sm font-medium text-[var(--color-text)] ring-1 ring-inset ring-[var(--color-line)] transition hover:bg-[var(--color-surface-2)]"
+                    className="inline-flex h-11 w-full items-center justify-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text)] transition hover:border-[var(--color-brand)]"
                   >
                     <IconFacebook className="h-5 w-5" />
-                    Login with <span className="font-semibold">Facebook</span>
+                    Tiếp tục với <span className="font-semibold">Facebook</span>
                   </button>
                 </div>
               </>
@@ -326,7 +336,7 @@ export default function Auth({ mode }) {
                   <Link
                     to="/register"
                     state={location.state}
-                    className="font-semibold text-[var(--color-accent)] transition hover:text-[var(--color-text)]"
+                    className="font-semibold text-[var(--color-brand-strong)] transition hover:text-[var(--color-text)]"
                   >
                     Đăng ký
                   </Link>
@@ -337,7 +347,7 @@ export default function Auth({ mode }) {
                   <Link
                     to="/login"
                     state={location.state}
-                    className="font-semibold text-[var(--color-accent)] transition hover:text-[var(--color-text)]"
+                    className="font-semibold text-[var(--color-brand-strong)] transition hover:text-[var(--color-text)]"
                   >
                     Đăng nhập
                   </Link>

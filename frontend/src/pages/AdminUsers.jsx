@@ -42,9 +42,9 @@ export default function AdminUsers() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]">Quản trị</p>
+      <p className="label-tech text-[var(--color-brand-strong)]">Quản trị</p>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[28px] font-bold text-[var(--color-text)]">Người dùng</h1>
+        <h1 className="font-[var(--font-mono)] text-[26px] font-bold uppercase tracking-tight text-[var(--color-text)]">Người dùng</h1>
         <div className="w-full max-w-[320px]">
           <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, email..." />
         </div>
@@ -82,8 +82,11 @@ export default function AdminUsers() {
                     <span className="rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-2 py-0.5 text-[12px] text-[var(--color-text-muted)]">{u.role}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={u.isActive ? 'text-emerald-400' : 'text-red-400'}>
-                      {u.isActive ? 'Hoạt động' : 'Đã khóa'}
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className={`h-1.5 w-1.5 ${u.isActive ? 'bg-[var(--color-brand)]' : 'bg-[var(--color-text-dim)]'}`} />
+                      <span className={u.isActive ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'}>
+                        {u.isActive ? 'Hoạt động' : 'Đã khóa'}
+                      </span>
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
