@@ -36,7 +36,7 @@ export default function ResetPassword() {
         eyebrow="Đặt lại mật khẩu"
         title="Tạo mật khẩu mới"
         subtitle="Token có hiệu lực 1 giờ. Sau khi đổi, mọi phiên đăng nhập cũ sẽ bị thu hồi."
-        footer={<Link to="/login" className="font-semibold text-[#0a66ff] hover:underline">Đăng nhập →</Link>}
+        footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
           <Alert>{error}</Alert>

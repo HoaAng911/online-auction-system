@@ -43,7 +43,7 @@ export default function VerifyEmail() {
         eyebrow="Bảo mật tài khoản"
         title="Xác thực email"
         subtitle="Nhập token từ email hoặc mở link xác thực được gửi sau khi đăng ký."
-        footer={<Link to="/login" className="font-semibold text-[#0a66ff] hover:underline">Quay lại đăng nhập →</Link>}
+        footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
           <Alert>{error}</Alert>

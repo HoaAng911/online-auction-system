@@ -6,15 +6,15 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <span className="grid h-8 w-8 place-items-center rounded-md bg-[var(--color-brand)] text-[14px] font-black text-white">A</span>
             <span className="text-[14px] font-bold tracking-tight">
-              <span className="text-white">AUCTION</span>
+              <span className="text-[var(--color-text)]">AUCTION</span>
               <span className="text-[var(--color-accent)]">.VN</span>
             </span>
-            <span className="text-[12px] text-zinc-500 md:ml-3">© 2026 Online Auction System</span>
+            <span className="text-[12px] text-[var(--color-text-dim)] md:ml-3">© 2026 Online Auction System</span>
           </div>
-          <div className="flex gap-6 text-[12px] text-zinc-500">
-            <a href="#" className="transition-colors hover:text-white">Điều khoản</a>
-            <a href="#" className="transition-colors hover:text-white">Bảo mật</a>
-            <a href="#" className="transition-colors hover:text-white">Liên hệ</a>
+          <div className="flex gap-6 text-[12px] text-[var(--color-text-dim)]">
+            <a href="#" className="transition-colors hover:text-[var(--color-text)]">Điều khoản</a>
+            <a href="#" className="transition-colors hover:text-[var(--color-text)]">Bảo mật</a>
+            <a href="#" className="transition-colors hover:text-[var(--color-text)]">Liên hệ</a>
           </div>
         </div>
       </div>

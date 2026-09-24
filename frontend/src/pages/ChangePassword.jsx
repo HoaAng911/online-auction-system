@@ -35,7 +35,7 @@ export default function ChangePassword() {
         eyebrow="Bảo mật"
         title="Đổi mật khẩu"
         subtitle="Yêu cầu đăng nhập. Mật khẩu mới phải khác mật khẩu cũ."
-        footer={<Link to="/me" className="font-semibold text-[#0a66ff] hover:underline">Quay lại hồ sơ →</Link>}
+        footer={<Link to="/me" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại hồ sơ →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
           <Alert>{error}</Alert>

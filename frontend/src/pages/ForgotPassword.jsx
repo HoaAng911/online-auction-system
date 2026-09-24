@@ -32,7 +32,7 @@ export default function ForgotPassword() {
         eyebrow="Khôi phục truy cập"
         title="Quên mật khẩu"
         subtitle="Nhập email đăng ký để nhận link đặt lại mật khẩu."
-        footer={<Link to="/login" className="font-semibold text-[#0a66ff] hover:underline">Quay lại đăng nhập →</Link>}
+        footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
           <Alert>{error}</Alert>

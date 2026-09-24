@@ -42,9 +42,9 @@ export default function AdminUsers() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0a66ff]">Quản trị</p>
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]">Quản trị</p>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[28px] font-bold text-white">Người dùng</h1>
+        <h1 className="text-[28px] font-bold text-[var(--color-text)]">Người dùng</h1>
         <div className="w-full max-w-[320px]">
           <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, email..." />
         </div>
@@ -54,10 +54,10 @@ export default function AdminUsers() {
         <Alert>{error}</Alert>
       </div>
 
-      <div className="mt-4 overflow-x-auto border border-[#1e1e22]">
-        <table className="w-full min-w-[720px] bg-[#0b0b0c] text-left text-[13px]">
+      <div className="mt-4 overflow-x-auto rounded-[var(--radius)] border border-[var(--color-line)]">
+        <table className="w-full min-w-[720px] bg-[var(--color-surface)] text-left text-[13px]">
           <thead>
-            <tr className="border-b border-[#1e1e22] text-[11px] uppercase tracking-wider text-zinc-500">
+            <tr className="border-b border-[var(--color-line)] text-[11px] uppercase tracking-wider text-[var(--color-text-dim)]">
               <th className="px-4 py-3">Người dùng</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Vai trò</th>
@@ -67,19 +67,19 @@ export default function AdminUsers() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-zinc-500">Đang tải...</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-[var(--color-text-dim)]">Đang tải...</td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-zinc-500">Không có dữ liệu</td></tr>
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-[var(--color-text-dim)]">Không có dữ liệu</td></tr>
             ) : (
               users.map((u) => (
-                <tr key={u.id} className="border-b border-[#141416] last:border-0 hover:bg-[#101012]">
+                <tr key={u.id} className="border-b border-[var(--color-line)] last:border-0 hover:bg-[var(--color-surface-2)]">
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-white">{u.fullName}</p>
-                    <p className="text-[12px] text-zinc-500">@{u.username}</p>
+                    <p className="font-semibold text-[var(--color-text)]">{u.fullName}</p>
+                    <p className="text-[12px] text-[var(--color-text-dim)]">@{u.username}</p>
                   </td>
-                  <td className="px-4 py-3 text-zinc-300">{u.email}</td>
+                  <td className="px-4 py-3 text-[var(--color-text-muted)]">{u.email}</td>
                   <td className="px-4 py-3">
-                    <span className="border border-[#2a2a2e] px-2 py-0.5 text-[12px] text-zinc-300">{u.role}</span>
+                    <span className="rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-2 py-0.5 text-[12px] text-[var(--color-text-muted)]">{u.role}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span className={u.isActive ? 'text-emerald-400' : 'text-red-400'}>
@@ -90,7 +90,7 @@ export default function AdminUsers() {
                     <button
                       onClick={() => toggleStatus(u)}
                       disabled={acting === u.id}
-                      className="border border-[#2a2a2e] px-3 py-1.5 text-[12px] font-semibold text-white hover:border-zinc-500 disabled:opacity-50"
+                      className="rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-3 py-1.5 text-[12px] font-semibold text-[var(--color-text)] hover:border-[var(--color-text-dim)] disabled:opacity-50"
                     >
                       {acting === u.id ? '...' : u.isActive ? 'Khóa' : 'Mở khóa'}
                     </button>
