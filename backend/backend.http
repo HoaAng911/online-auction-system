@@ -1,6 +1,107 @@
 @backend_HostAddress = http://localhost:5293
+@accessToken =
+@refreshToken =
 
-GET {{backend_HostAddress}}/weatherforecast/
+### 1. Đăng ký
+POST {{backend_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "hoang_test",
+  "email": "hoang_test@example.com",
+  "password": "Hoang@123456",
+  "fullName": "Hoàng Test",
+  "phone": "0912345678",
+  "address": "Hà Nội"
+}
+
+### 2. Đăng nhập (copy accessToken/refreshToken vào biến trên)
+POST {{backend_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "hoang_test",
+  "password": "Hoang@123456"
+}
+
+### 3. Làm mới token
+POST {{backend_HostAddress}}/api/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### 4. Xem hồ sơ cá nhân
+GET {{backend_HostAddress}}/api/users/me
+Authorization: Bearer {{accessToken}}
 Accept: application/json
 
-###
+### 5. Cập nhật hồ sơ
+PUT {{backend_HostAddress}}/api/users/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Hoàng Updated",
+  "phone": "0987654321",
+  "address": "TP.HCM"
+}
+
+### 6. Đổi mật khẩu
+POST {{backend_HostAddress}}/api/users/me/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "Hoang@123456",
+  "newPassword": "Hoang@654321"
+}
+
+### 7. Xác thực email (dán token từ log EmailService)
+POST {{backend_HostAddress}}/api/auth/verify-email
+Content-Type: application/json
+
+{
+  "token": "PASTE_TOKEN_HERE"
+}
+
+### 8. Quên mật khẩu
+POST {{backend_HostAddress}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "hoang_test@example.com"
+}
+
+### 9. Đặt lại mật khẩu (dán token từ log EmailService)
+POST {{backend_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "PASTE_TOKEN_HERE",
+  "newPassword": "Hoang@123456"
+}
+
+### 10. Đăng xuất
+POST {{backend_HostAddress}}/api/auth/logout
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### 11. Admin: danh sách người dùng
+GET {{backend_HostAddress}}/api/users?search=hoang&page=1&pageSize=20
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 12. Admin: khóa/mở khóa (dán userId)
+PUT {{backend_HostAddress}}/api/users/PASTE_USER_ID/status
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}

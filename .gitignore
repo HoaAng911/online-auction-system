@@ -10,5 +10,6 @@ frontend/.env
 
 # --- General ---
 .vscode/
+.roo/
 *.log
 .DS_Store
