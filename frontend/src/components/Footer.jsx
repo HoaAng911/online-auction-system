@@ -1,23 +1,49 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-[var(--color-line)] bg-[var(--color-bg)]">
-      <div className="mx-auto max-w-[1320px] px-4 py-10 lg:px-6">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="grid h-8 w-8 place-items-center rounded-[6px] bg-[var(--color-brand)] font-[var(--font-mono)] text-[14px] font-bold text-[var(--color-on-brand)]">
-              A
-            </span>
-            <span className="font-[var(--font-mono)] text-[14px] font-bold uppercase tracking-[0.14em]">
-              <span className="text-[var(--color-text)]">AUCTION</span>
-              <span className="text-[var(--color-brand-strong)]">.VN</span>
-            </span>
-            <span className="label-tech md:ml-3">© 2026 Online Auction System</span>
+    <footer className="border-t border-[var(--color-line)] bg-white">
+      <div className="container-page py-16">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+          {/* Thương hiệu */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <span className="grid h-9 w-9 place-items-center bg-black font-[var(--font-display)] text-[16px] font-black leading-none text-white">
+                A
+              </span>
+              <span className="font-[var(--font-display)] text-[17px] font-black uppercase tracking-[0.14em]">
+                <span className="text-black">Auction</span>
+                <span className="text-[var(--color-brand)]">.vn</span>
+              </span>
+            </div>
+            <p className="max-w-[36ch] text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+              Sàn đấu giá trực tuyến minh bạch — nơi người bán đăng tin và người
+              mua trả giá theo thời gian thực.
+            </p>
           </div>
-          <div className="flex gap-6">
-            <a href="#" className="label-tech transition-colors hover:text-[var(--color-text)]">Điều khoản</a>
-            <a href="#" className="label-tech transition-colors hover:text-[var(--color-text)]">Bảo mật</a>
-            <a href="#" className="label-tech transition-colors hover:text-[var(--color-text)]">Liên hệ</a>
+
+          {/* Điều hướng */}
+          <nav className="flex flex-col gap-3" aria-label="Liên kết chân trang">
+            <p className="label-tech text-[var(--color-brand)]">Sản phẩm</p>
+            <a href="#categories" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">Danh mục</a>
+            <a href="#how" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">Cách hoạt động</a>
+            <a href="#" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">Điều khoản</a>
+            <a href="#" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">Bảo mật</a>
+          </nav>
+
+          {/* Liên hệ */}
+          <div className="flex flex-col gap-3">
+            <p className="label-tech text-[var(--color-brand)]">Liên hệ</p>
+            <a href="mailto:hello@auction.vn" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">
+              hello@auction.vn
+            </a>
+            <a href="#" className="text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-black">
+              Trung tâm hỗ trợ
+            </a>
           </div>
+        </div>
+
+        <div className="mt-12 flex flex-col gap-3 border-t border-[var(--color-line)] pt-6 md:flex-row md:items-center md:justify-between">
+          <span className="label-tech">© 2026 Online Auction System</span>
+          <span className="label-tech">Sport minimal — Adidas inspired</span>
         </div>
       </div>
     </footer>

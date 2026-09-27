@@ -1,38 +1,12 @@
 import axios from 'axios'
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api'
-const USE_MOCK = String(import.meta.env.VITE_USE_MOCK || '').toLowerCase() === 'true'
-
-// Adapter giả lập backend (chỉ dùng khi VITE_USE_MOCK=true).
-// Trả về đúng shape ApiResponse: { success, message, data, errors }.
-async function mockAdapter(config) {
-  const { handleMockRequest } = await import('../mocks/mockAdapter')
-  const payload = await handleMockRequest(config)
-  const status = payload.success ? 200 : 400
-  const response = {
-    data: payload,
-    status,
-    statusText: payload.success ? 'OK' : 'Bad Request',
-    headers: {},
-    config,
-    request: {},
-  }
-  // Axios coi status >= 400 là lỗi -> ném để interceptor xử lý như backend thật
-  if (!payload.success) {
-    const err = new axios.AxiosError(payload.message, 'ERR_BAD_REQUEST', config, {}, response)
-    throw err
-  }
-  return response
-}
 
 const api = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
-  ...(USE_MOCK ? { adapter: mockAdapter } : {}),
 })
-
-export const isMockMode = USE_MOCK
 
 const ACCESS_KEY = 'auction.accessToken'
 const REFRESH_KEY = 'auction.refreshToken'

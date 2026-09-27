@@ -20,16 +20,20 @@ public class AppDbContext : DbContext
         _http = http;
     }
 
-    // ===== Module 1 — Hoàng: Xác thực & Người dùng =====
+    // Module 1 — Hoang: Xac thuc va Nguoi dung
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<UserVerificationToken> UserVerificationTokens => Set<UserVerificationToken>();
 
-    // ===== Module 2 — Long: Sản phẩm & Đấu giá (thêm DbSet ở dưới dòng này) =====
+    // Module 2 — Long: San pham va Dau gia (them DbSet o duoi dong nay)
 
 
-    // ===== Module 3 — Hằng: Thanh toán, Thông báo & Đánh giá (thêm DbSet ở dưới dòng này) =====
-
+    // Module 3 — Hang: Thanh toan, Thong bao va Danh gia (them DbSet o duoi dong nay)
+    public DbSet<AuctionWinner> AuctionWinners => Set<AuctionWinner>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Setting> Settings => Set<Setting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

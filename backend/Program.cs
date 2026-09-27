@@ -39,7 +39,7 @@ builder.Services.AddCors(o => o.AddPolicy("Frontend", p => p
     .AllowAnyMethod()
     .AllowCredentials()));
 
-// ===== Module 1 — Hoàng: Xác thực & Người dùng =====
+// Module 1 — Hoang: Xac thuc va Nguoi dung
 // Cần cho AppDbContext đọc claim NameIdentifier khi ghi audit (mục 5.3).
 builder.Services.AddHttpContextAccessor();
 
@@ -51,6 +51,13 @@ builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+// Module 3 — Hang: Thanh toan, Thong bao va Danh gia
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ISettingService, SettingService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // JWT Authentication (mục 5.4). Secret đọc từ cấu hình, không viết cứng.
 var jwtSecret = builder.Configuration["Jwt:Secret"];
@@ -105,10 +112,20 @@ using (var scope = app.Services.CreateScope())
             await db.SaveChangesAsync();
             logger.LogInformation("Đã seed tài khoản Admin mặc định: {Email}", adminEmail);
         }
+
+        // Seed Settings mặc định (Module 3 — Hang).
+        if (!await db.Settings.AnyAsync())
+        {
+            db.Settings.AddRange(
+                new Setting { Key = SettingKeys.CommissionRate, Value = "5", Description = "Phí hoa hồng (%)" },
+                new Setting { Key = SettingKeys.MinBidAmount, Value = "10000", Description = "Bước giá tối thiểu (VND)" });
+            await db.SaveChangesAsync();
+            logger.LogInformation("Đã seed Settings mặc định");
+        }
     }
     catch (Exception ex)
     {
-        logger.LogWarning(ex, "Seed Admin thất bại (có thể DB chưa sẵn sàng)");
+        logger.LogWarning(ex, "Seed Admin/Settings thất bại (có thể DB chưa sẵn sàng)");
     }
 }
 
