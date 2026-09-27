@@ -1,13 +1,22 @@
 /* ============================================================
-   UI kit dùng chung — chỉ dùng design token trong index.css
-   Theme: technical print (giấy trắng + mực + vàng gold)
-   (không hardcode mã màu/hex để đổi theme 1 chỗ là xong)
+   UI kit dùng chung — refactor trên nền shadcn/ui primitives.
+   Giữ nguyên API cũ (Field, TextInput, PrimaryButton, GhostButton,
+   Alert, Card, StatCell, Eyebrow, AuthCard) để không phá vỡ
+   các trang đang import. Theme vẫn lấy design token trong index.css.
    ============================================================ */
 
-export function Field({ label, error, children, hint }) {
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Card as ShadCard } from './ui/card'
+import { Alert as ShadAlert } from './ui/alert'
+import { Label } from './ui/label'
+
+export function Field({ label, error, children, hint, htmlFor }) {
   return (
-    <label className="block">
-      <span className="label-tech mb-2 block">{label}</span>
+    <div className="block">
+      <Label htmlFor={htmlFor} className="label-tech mb-2 block">
+        {label}
+      </Label>
       {children}
       {hint && !error && (
         <span className="mt-1.5 block text-[12px] text-[var(--color-text-dim)]">{hint}</span>
@@ -15,78 +24,79 @@ export function Field({ label, error, children, hint }) {
       {error && (
         <span className="mt-1.5 block text-[12px] text-[var(--color-danger)]">{error}</span>
       )}
-    </label>
+    </div>
   )
 }
 
 export function TextInput({ className = '', ...props }) {
-  return (
-    <input
-      {...props}
-      className={`w-full rounded-[var(--radius-sm)] border border-[var(--color-line)] bg-[var(--color-surface)] px-3.5 py-2.5 text-[14px] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] outline-none transition focus:border-[var(--color-brand)] focus:ring-[3px] focus:ring-[var(--color-brand)]/18 ${className}`}
-    />
-  )
+  return <Input className={className} {...props} />
 }
 
 export function PrimaryButton({ children, loading, className = '', ...props }) {
   return (
-    <button
+    <Button
       {...props}
       disabled={loading || props.disabled}
-      className={`flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)] focus-visible:ring-[3px] focus-visible:ring-[var(--color-brand)]/30 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      aria-busy={loading || undefined}
+      className={`w-full ${className}`}
     >
       {loading ? 'Đang xử lý…' : children}
-    </button>
+    </Button>
   )
 }
 
 export function GhostButton({ children, className = '', ...props }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       {...props}
-      className={`flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-transparent px-4 py-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text)] transition-colors hover:border-[var(--color-text)] hover:bg-[var(--color-surface-2)] focus-visible:ring-[3px] focus-visible:ring-[var(--color-brand)]/30 ${className}`}
+      className={`w-full ${className}`}
     >
       {children}
-    </button>
+    </Button>
   )
 }
 
-const ALERT_STYLES = {
-  error: 'border-[var(--color-danger)]/35 bg-[var(--color-danger)]/[0.06] text-[var(--color-danger)]',
-  success: 'border-[var(--color-success)]/35 bg-[var(--color-success)]/[0.06] text-[var(--color-success)]',
-  warning: 'border-[var(--color-warning)]/40 bg-[var(--color-warning)]/[0.08] text-[var(--color-warning)]',
+const ALERT_VARIANTS = {
+  error: 'destructive',
+  success: 'success',
+  warning: 'warning',
 }
 
 export function Alert({ type = 'error', children }) {
   if (!children) return null
   return (
-    <div
-      className={`rounded-[var(--radius-sm)] border px-3.5 py-2.5 text-[13px] ${ALERT_STYLES[type] || ALERT_STYLES.error
-        }`}
-    >
-      {children}
-    </div>
+    <ShadAlert variant={ALERT_VARIANTS[type] || 'destructive'}>
+      <span aria-hidden className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+      <span>{children}</span>
+    </ShadAlert>
   )
 }
 
-/* Panel nền tảng — viền mảnh, không đổ bóng nặng */
+/* Panel nền tảng — viền hairline, bo góc lớn, bóng mềm rất nhẹ */
 export function Card({ children, className = '' }) {
+  return <ShadCard className={className}>{children}</ShadCard>
+}
+
+/* Khung dữ liệu — nhãn nhỏ + giá trị số serif thanh lịch */
+export function StatCell({ label, value, className = '' }) {
   return (
-    <div
-      className={`rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] ${className}`}
-    >
-      {children}
+    <div className={`flex flex-col gap-2 p-5 sm:p-6 ${className}`}>
+      <span className="label-tech">{label}</span>
+      <span className="font-display text-[clamp(24px,3vw,32px)] font-semibold leading-none tracking-[-0.01em] text-[var(--color-text)]">
+        {value}
+      </span>
     </div>
   )
 }
 
-/* Nhãn nhỏ phía trên tiêu đề section — chữ hoa mono */
+/* Nhãn nhỏ phía trên tiêu đề section — chữ hoa giãn nhẹ, có gạch đồng */
 export function Eyebrow({ children, className = '' }) {
   return (
     <p
-      className={`inline-flex items-center gap-2 font-[var(--font-mono)] text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--color-brand-strong)] ${className}`}
+      className={`inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-strong)] ${className}`}
     >
-      <span aria-hidden className="h-[1px] w-6 bg-[var(--color-brand)]" />
+      <span aria-hidden className="h-[1px] w-7 bg-[var(--color-brand)]" />
       {children}
     </p>
   )
@@ -94,28 +104,28 @@ export function Eyebrow({ children, className = '' }) {
 
 export function AuthCard({ eyebrow, title, subtitle, children, footer }) {
   return (
-    <div className="mx-auto w-full max-w-[440px]">
-      <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)]">
-        {/* thanh gold trên đỉnh — dấu nhận diện */}
-        <div className="h-[3px] w-full rounded-t-[var(--radius)] bg-[var(--color-brand)]" />
-        <div className="p-6 sm:p-8">
-          <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="mt-3 text-[26px] font-bold leading-tight tracking-[-0.01em] text-[var(--color-text)]">
+    <div className="mx-auto w-full max-w-[460px]">
+      <ShadCard className="overflow-hidden rounded-[var(--radius-lg)]">
+        {/* thanh đồng mảnh trên đỉnh — dấu nhận diện thương hiệu */}
+        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent" />
+        <div className="p-6 sm:p-10">
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+          <h1 className="display-tight font-display mt-3 text-[clamp(26px,5vw,32px)] font-semibold text-[var(--color-text)]">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+            <p className="mt-3 text-[13.5px] leading-relaxed text-[var(--color-text-muted)]">
               {subtitle}
             </p>
           )}
-          <div className="mt-7 flex flex-col gap-4">{children}</div>
+          <div className="mt-9 flex flex-col gap-4">{children}</div>
           {footer && (
-            <div className="mt-7 border-t border-[var(--color-line)] pt-5 text-[13px] text-[var(--color-text-muted)]">
+            <div className="mt-9 border-t border-[var(--color-line)] pt-6 text-[13px] text-[var(--color-text-muted)]">
               {footer}
             </div>
           )}
         </div>
-      </div>
+      </ShadCard>
     </div>
   )
 }

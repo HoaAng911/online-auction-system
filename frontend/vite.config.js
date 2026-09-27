@@ -1,10 +1,16 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   // Workaround tam thoi khi duong dan chua ky tu '#' (vi du LapTrinhWeb2(C#)):
   // Rolldown/Vite cat cu duong dan tai '#', gay loi Pre-transform Failed to load url /src/main.jsx
   // Tat pre-bundling (noDiscovery) de dev server chay duoc.
@@ -24,6 +30,12 @@ export default defineConfig({
       'cookie',
       'set-cookie-parser',
       'axios',
+      // shadcn/ui primitives
+      'clsx',
+      'tailwind-merge',
+      'class-variance-authority',
+      '@radix-ui/react-slot',
+      '@radix-ui/react-label',
     ],
   },
   server: {

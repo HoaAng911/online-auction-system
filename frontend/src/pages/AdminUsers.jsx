@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Alert, TextInput } from '../components/ui'
 import { getApiErrorMessage } from '../services/api'
 import { userService } from '../services/userService'
+import { Button } from '../components/ui/button'
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([])
@@ -41,20 +42,20 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-10 lg:px-6">
+    <div className="container-page section-pad">
       <p className="label-tech text-[var(--color-brand-strong)]">Quản trị</p>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-[var(--font-mono)] text-[26px] font-bold uppercase tracking-tight text-[var(--color-text)]">Người dùng</h1>
+        <h1 className="font-[var(--font-mono)] text-[clamp(22px,4vw,28px)] font-bold uppercase tracking-tight text-[var(--color-text)]">Người dùng</h1>
         <div className="w-full max-w-[320px]">
-          <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, email..." />
+          <TextInput type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm theo tên, email..." />
         </div>
       </div>
 
       <div className="mt-4">
-        <Alert>{error}</Alert>
+        <Alert type="error">{error}</Alert>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-[var(--radius)] border border-[var(--color-line)]">
+      <div className="reveal mt-4 overflow-x-auto rounded-[var(--radius)] border border-[var(--color-line)]">
         <table className="w-full min-w-[720px] bg-[var(--color-surface)] text-left text-[13px]">
           <thead>
             <tr className="border-b border-[var(--color-line)] text-[11px] uppercase tracking-wider text-[var(--color-text-dim)]">
@@ -90,13 +91,15 @@ export default function AdminUsers() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => toggleStatus(u)}
                       disabled={acting === u.id}
-                      className="rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-3 py-1.5 text-[12px] font-semibold text-[var(--color-text)] hover:border-[var(--color-text-dim)] disabled:opacity-50"
+                      aria-busy={acting === u.id || undefined}
                     >
-                      {acting === u.id ? '...' : u.isActive ? 'Khóa' : 'Mở khóa'}
-                    </button>
+                      {acting === u.id ? '…' : u.isActive ? 'Khóa' : 'Mở khóa'}
+                    </Button>
                   </td>
                 </tr>
               ))

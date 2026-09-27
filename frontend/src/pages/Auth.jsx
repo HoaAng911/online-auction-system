@@ -4,6 +4,8 @@ import { Alert } from '../components/ui'
 import { useAuth } from '../context/AuthContext'
 import { getApiErrorMessage } from '../services/api'
 import sideImage from '../assets/logintheme.png'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
 
 /* Icon SVG nội tuyến (không phụ thuộc thư viện) */
 function IconUser(props) {
@@ -128,7 +130,8 @@ export default function Auth({ mode }) {
         const to = location.state?.from ?? '/'
         navigate(to, { replace: true })
       } else {
-        await register({
+        // Backend cấp token ngay sau đăng ký (IssueTokensAsync) => coi như đã đăng nhập.
+        const res = await register({
           username: form.username.trim(),
           email: form.email.trim(),
           password: form.password,
@@ -136,8 +139,14 @@ export default function Auth({ mode }) {
           phone: form.phoneNumber.trim(),
           address: form.address.trim(),
         })
-        setNotice('Đăng ký thành công! Bạn có thể kiểm tra email để xác thực tài khoản.')
         setForm(BLANK)
+        // Nếu chưa xác thực email: nhắc người dùng kiểm tra hộp thư, vẫn vào được trang chủ.
+        const verified = res?.data?.user?.isEmailVerified
+        const to = location.state?.from ?? '/'
+        navigate(to, {
+          replace: true,
+          state: verified ? undefined : { notice: 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.' },
+        })
       }
     } catch (err) {
       setError(getApiErrorMessage(err))
@@ -147,7 +156,7 @@ export default function Auth({ mode }) {
   }
 
   const inputBase =
-    'h-12 w-full rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] pl-11 pr-4 text-[14px] text-[var(--color-text)] placeholder-[var(--color-text-dim)] outline-none transition focus:border-[var(--color-brand)] focus:ring-2 focus:ring-[var(--color-brand)]/30'
+    'h-12 w-full border border-black bg-white pl-11 pr-4 text-[14px] text-black placeholder:text-[var(--color-text-dim)] outline-none transition focus:border-[var(--color-brand)] focus:ring-2 focus:ring-[var(--color-brand)]/30'
   const iconClass =
     'pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[var(--color-text-dim)]'
 
@@ -158,22 +167,11 @@ export default function Auth({ mode }) {
   const animName = isLogin ? 'auth-in-left' : 'auth-in-right'
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center bg-[var(--color-bg)] px-4 py-10">
-      {/* Lưới bản vẽ mảnh */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.5]"
-        style={{
-          backgroundImage:
-            'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)',
-          backgroundSize: '56px 56px',
-        }}
-      />
-
-      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] lg:grid-cols-2">
-        {/* Panel ảnh — bọc khung kỹ thuật + viền vàng */}
+    <div className="relative flex min-h-[100dvh] items-center justify-center bg-white px-4 py-10">
+      <div className="reveal relative grid w-full max-w-4xl overflow-hidden border border-[var(--color-line)] bg-white lg:grid-cols-2">
+        {/* Panel ảnh — Adidas style: clean, bold overlay */}
         <div className={`relative order-1 p-4 sm:p-5 ${imageOrder}`}>
-          <div className="relative h-56 w-full overflow-hidden border border-[var(--color-line)] lg:h-full lg:min-h-[540px]">
+          <div className="relative h-56 w-full overflow-hidden border border-[var(--color-line)] lg:h-full lg:min-h-[560px]">
             <img
               key={animKey}
               src={sideImage}
@@ -181,13 +179,20 @@ export default function Auth({ mode }) {
               className="h-full w-full object-cover"
               style={{ animation: 'auth-fade-swap 0.7s var(--ease-out-expo) both' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-ink)]/85 via-[var(--color-ink)]/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            {/* Nhãn định vị góc trên */}
+            <div className="absolute left-4 top-4 flex items-center gap-2 border border-white/20 bg-black/40 px-2.5 py-1 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 bg-[var(--color-brand)]" />
+              <span className="label-tech text-white/90">
+                {isLogin ? 'Phiên trực tiếp' : 'Khu vực thành viên'}
+              </span>
+            </div>
             <div className="absolute bottom-6 left-6 right-6">
-              <span className="label-tech text-[var(--color-brand-strong)]">Auction.vn</span>
-              <p className="mt-2 font-[var(--font-mono)] text-[22px] font-bold uppercase leading-tight tracking-tight text-[var(--color-paper)]">
+              <span className="label-tech text-[var(--color-brand)]">Auction.vn</span>
+              <p className="mt-2 font-[var(--font-display)] text-[22px] font-black uppercase leading-tight tracking-tight text-white">
                 {isLogin ? 'Chào mừng trở lại' : 'Tham gia cộng đồng'}
               </p>
-              <p className="mt-2 max-w-xs text-[13px] leading-6 text-[var(--color-paper)]/75">
+              <p className="mt-2 max-w-xs text-[13px] leading-6 text-white/75">
                 {isLogin
                   ? 'Đăng nhập để tiếp tục đấu giá và theo dõi các phiên yêu thích.'
                   : 'Tạo tài khoản để bắt đầu đặt giá và sở hữu những món đồ độc đáo.'}
@@ -203,10 +208,10 @@ export default function Auth({ mode }) {
             className="mx-auto flex h-full max-w-sm flex-col justify-center"
             style={{ animation: `${animName} 0.55s var(--ease-out-expo) both` }}
           >
-            <span className="label-tech text-[var(--color-brand-strong)]">
+            <span className="label-tech text-[var(--color-brand)]">
               {isLogin ? 'Đăng nhập' : 'Đăng ký'}
             </span>
-            <h1 className="mt-3 font-[var(--font-mono)] text-[30px] font-bold uppercase leading-tight tracking-tight text-[var(--color-text)]">
+            <h1 className="mt-3 font-[var(--font-display)] text-[30px] font-black uppercase leading-tight tracking-tight text-black">
               {isLogin ? 'Chào mừng trở lại' : 'Tạo tài khoản'}
             </h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
@@ -216,14 +221,14 @@ export default function Auth({ mode }) {
             </p>
 
             <form onSubmit={onSubmit} className="mt-7 flex flex-col gap-3.5">
-              {notice && <Alert kind="success">{notice}</Alert>}
-              {error && <Alert kind="error">{error}</Alert>}
+              {notice && <Alert type="success">{notice}</Alert>}
+              {error && <Alert type="error">{error}</Alert>}
 
               {!isLogin && (
                 <>
                   <div className="relative">
                     <IconUser className={iconClass} />
-                    <input
+                    <Input
                       className={inputBase}
                       placeholder="Username"
                       value={form.username}
@@ -233,7 +238,7 @@ export default function Auth({ mode }) {
                   </div>
                   <div className="relative">
                     <IconUser className={iconClass} />
-                    <input
+                    <Input
                       className={inputBase}
                       placeholder="Họ và tên"
                       value={form.fullName}
@@ -246,7 +251,7 @@ export default function Auth({ mode }) {
 
               <div className="relative">
                 <IconMail className={iconClass} />
-                <input
+                <Input
                   type="email"
                   className={inputBase}
                   placeholder="Email"
@@ -258,7 +263,7 @@ export default function Auth({ mode }) {
 
               <div className="relative">
                 <IconLock className={iconClass} />
-                <input
+                <Input
                   type="password"
                   className={inputBase}
                   placeholder="Password"
@@ -272,7 +277,7 @@ export default function Auth({ mode }) {
                 <>
                   <div className="relative">
                     <IconPhone className={iconClass} />
-                    <input
+                    <Input
                       className={inputBase}
                       placeholder="Số điện thoại (tuỳ chọn)"
                       value={form.phoneNumber}
@@ -281,7 +286,7 @@ export default function Auth({ mode }) {
                   </div>
                   <div className="relative">
                     <IconPin className={iconClass} />
-                    <input
+                    <Input
                       className={inputBase}
                       placeholder="Địa chỉ (tuỳ chọn)"
                       value={form.address}
@@ -291,14 +296,14 @@ export default function Auth({ mode }) {
                 </>
               )}
 
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 h-12 w-full text-[13px] uppercase tracking-[0.08em]"
               >
                 {loading ? 'Đang xử lý...' : isLogin ? 'Đăng nhập' : 'Đăng ký'}
                 {!loading && <IconArrow className="h-[18px] w-[18px]" />}
-              </button>
+              </Button>
             </form>
 
             {/* Social — chỉ hiện ở Login như ảnh mẫu */}
@@ -306,24 +311,18 @@ export default function Auth({ mode }) {
               <>
                 <div className="my-6 flex items-center gap-4">
                   <span className="h-px flex-1 bg-[var(--color-line)]" />
-                  <span className="label-tech text-[var(--color-text-dim)]">Hoặc tiếp tục với</span>
+                  <span className="label-tech text-[var(--color-text-muted)]">Hoặc tiếp tục với</span>
                   <span className="h-px flex-1 bg-[var(--color-line)]" />
                 </div>
                 <div className="flex flex-col gap-3">
-                  <button
-                    type="button"
-                    className="inline-flex h-11 w-full items-center justify-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text)] transition hover:border-[var(--color-brand)]"
-                  >
+                  <Button type="button" variant="outline" className="h-11 w-full gap-3">
                     <IconGoogle className="h-5 w-5" />
                     Tiếp tục với <span className="font-semibold">Google</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex h-11 w-full items-center justify-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text)] transition hover:border-[var(--color-brand)]"
-                  >
+                  </Button>
+                  <Button type="button" variant="outline" className="h-11 w-full gap-3">
                     <IconFacebook className="h-5 w-5" />
                     Tiếp tục với <span className="font-semibold">Facebook</span>
-                  </button>
+                  </Button>
                 </div>
               </>
             )}
@@ -336,7 +335,7 @@ export default function Auth({ mode }) {
                   <Link
                     to="/register"
                     state={location.state}
-                    className="font-semibold text-[var(--color-brand-strong)] transition hover:text-[var(--color-text)]"
+                    className="font-bold text-[var(--color-brand)] transition hover:text-black"
                   >
                     Đăng ký
                   </Link>
@@ -347,7 +346,7 @@ export default function Auth({ mode }) {
                   <Link
                     to="/login"
                     state={location.state}
-                    className="font-semibold text-[var(--color-brand-strong)] transition hover:text-[var(--color-text)]"
+                    className="font-bold text-[var(--color-brand)] transition hover:text-black"
                   >
                     Đăng nhập
                   </Link>

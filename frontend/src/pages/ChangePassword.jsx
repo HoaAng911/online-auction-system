@@ -30,7 +30,7 @@ export default function ChangePassword() {
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6">
+    <div className="container-page flex min-h-[70vh] items-start justify-center py-12 lg:py-16">
       <AuthCard
         eyebrow="Bảo mật"
         title="Đổi mật khẩu"
@@ -38,7 +38,7 @@ export default function ChangePassword() {
         footer={<Link to="/me" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại hồ sơ →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <Alert>{error}</Alert>
+          <Alert type="error">{error}</Alert>
           {msg && <Alert type="success">{msg}</Alert>}
           <Field label="Mật khẩu hiện tại">
             <TextInput type="password" value={form.currentPassword} onChange={(e) => setForm({ ...form, currentPassword: e.target.value })} />

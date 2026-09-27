@@ -31,7 +31,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6">
+    <div className="container-page flex min-h-[70vh] items-start justify-center py-12 lg:py-16">
       <AuthCard
         eyebrow="Đặt lại mật khẩu"
         title="Tạo mật khẩu mới"
@@ -39,7 +39,7 @@ export default function ResetPassword() {
         footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <Alert>{error}</Alert>
+          <Alert type="error">{error}</Alert>
           {msg && <Alert type="success">{msg}</Alert>}
           <Field label="Token đặt lại">
             <TextInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="Dán token từ email" />

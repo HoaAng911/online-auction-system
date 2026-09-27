@@ -1,257 +1,279 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import motorcycle from '../assets/Bitmap.png'
 
-function formatVND(n) {
-  return new Intl.NumberFormat('vi-VN').format(n) + ' ₫'
-}
+const HEADER_OFFSET = 64 // chiều cao navbar, dùng để cuộn đúng vị trí khi bấm tab
 
-function useCountdown(targetMs) {
-  const [now, setNow] = useState(Date.now())
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000)
-    return () => clearInterval(id)
-  }, [])
-  const diff = Math.max(0, targetMs - now)
-  const h = String(Math.floor(diff / 3600000)).padStart(2, '0')
-  const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0')
-  const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0')
-  return `${h}:${m}:${s}`
-}
-
-// Ô danh mục dạng "packet" — bản vẽ kỹ thuật (thay bằng ảnh thật khi có API).
-const heroTiles = [
-  { code: '01', label: 'ĐIỆN TỬ', meta: '028 · đang mở' },
-  { code: '02', label: 'SƯU TẦM', meta: '014 · đang mở' },
-  { code: '03', label: 'XE & PHỤ KIỆN', meta: '009 · đang mở' },
+// Các bước điều hướng theo phong cách "model selector" trong ảnh reference
+const STEPS = [
+  { n: '01', key: 'explore', label: 'KHÁM PHÁ', target: 'explore' },
+  { n: '02', key: 'categories', label: 'DANH MỤC', target: 'categories' },
+  { n: '03', key: 'how', label: 'CÁCH HOẠT ĐỘNG', target: 'how' },
+  { n: '04', key: 'featured', label: 'NỔI BẬT', target: 'featured' },
+  { n: '05', key: 'cta', label: 'THAM GIA', target: 'cta' },
 ]
 
-const categories = [
-  { name: 'Điện tử', desc: 'Điện thoại, laptop, console', count: '2.4k phiên' },
-  { name: 'Thời trang', desc: 'Đồng hồ, túi xách, giày', count: '1.1k phiên' },
-  { name: 'Sưu tầm', desc: 'Đồ cổ, nghệ thuật, tem', count: '860 phiên' },
-  { name: 'Xe & Phụ kiện', desc: 'Xe, linh kiện, phụ tùng', count: '540 phiên' },
+const FEATURED = [
+  { name: 'Rolex Submariner', desc: 'Đồng hồ cơ Thuỵ Sĩ, hộp full.', price: '2.450.000.000 ₫', tag: '08' },
+  { name: 'Patek Philippe Nautilus', desc: 'Bản giới hạn, chưa qua sử dụng.', price: '5.900.000.000 ₫', tag: '05' },
+  { name: 'Hermès Birkin 25', desc: 'Da Togo, màu Gold, tem vàng.', price: '1.780.000.000 ₫', tag: '12' },
+  { name: 'PS5 Digital Edition', desc: 'Máy nguyên seal, bảo hành 12 tháng.', price: '12.990.000 ₫', tag: '31' },
 ]
 
-const steps = [
-  { n: '01', tag: 'Xác thực', title: 'Đăng ký & xác thực email', desc: 'Tạo tài khoản, xác thực email, đăng nhập và làm mới phiên an toàn.', links: [['Đăng ký', '/register'], ['Đăng nhập', '/login'], ['Xác thực email', '/verify-email']] },
-  { n: '02', tag: 'Tài khoản', title: 'Hồ sơ & bảo mật', desc: 'Xem/cập nhật hồ sơ, đổi mật khẩu, quên/đặt lại mật khẩu.', links: [['Hồ sơ', '/me'], ['Quên mật khẩu', '/forgot-password']] },
-  { n: '03', tag: 'Quản trị', title: 'Quản lý người dùng', desc: 'Admin xem danh sách, tìm kiếm, khóa/mở tài khoản.', links: [['Mở trang quản trị', '/admin/users']] },
+const CATEGORIES = [
+  { name: 'Đồng hồ & Trang sức', count: 248, glyph: '⌚' },
+  { name: 'Đồ điện tử', count: 512, glyph: '⌗' },
+  { name: 'Nghệ thuật & Sưu tầm', count: 129, glyph: '🖼' },
+  { name: 'Xe & Phụ tùng', count: 87, glyph: '⛭' },
 ]
 
 export default function Home() {
   const { isAuthenticated } = useAuth()
-  // Demo phiên nổi bật — sau này thay bằng GET /api/products?status=Active
-  const featured = {
-    title: 'PlayStation 5',
-    price: 12500000,
-    endAt: Date.now() + 2 * 3600 * 1000 + 14 * 60 * 1000 + 9 * 1000,
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [activeStep, setActiveStep] = useState('explore')
+
+  // Khi tab được bấm từ navbar (điều hướng kèm state), cuộn tới section tương ứng
+  useEffect(() => {
+    const target = location.state?.scrollTo
+    if (!target) return
+    const el = document.getElementById(target)
+    if (!el) return
+    const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+    window.scrollTo({ top, behavior: 'smooth' })
+    setActiveStep(target)
+  }, [location.state])
+
+  const goTo = (id) => {
+    setActiveStep(id)
+    const el = document.getElementById(id)
+    if (!el) return
+    const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+    window.scrollTo({ top, behavior: 'smooth' })
   }
-  const countdown = useCountdown(featured.endAt)
 
   return (
-    <div className="bg-[var(--color-bg)]">
-      {/* ============================ HERO ============================ */}
-      <section className="relative border-b border-[var(--color-line)]">
-        {/* Lưới bản vẽ mảnh */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.5]" style={{ backgroundImage: 'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)', backgroundSize: '56px 56px' }} />
+    <div id="explore" className="bg-white">
+      {/* ============ HERO — Adidas style: white, bold, minimal ============ */}
+      <section className="border-b border-[var(--color-line)]">
+        <div className="grid lg:grid-cols-[38%_62%]">
+          {/* ---------- PANEL TRÁI (white) ---------- */}
+          <div className="relative bg-white">
+            <div className="flex">
+              {/* Sidebar dọc: logo trên, hamburger giữa */}
+              <aside className="flex w-16 shrink-0 flex-col items-center border-r border-[var(--color-line)] py-6">
+                <span className="grid h-9 w-9 place-items-center bg-black font-[var(--font-display)] text-[15px] font-black leading-none text-white">
+                  A
+                </span>
+                <div className="mt-auto flex flex-col gap-1.5" aria-hidden>
+                  <span className="block h-[2px] w-5 bg-black" />
+                  <span className="block h-[2px] w-5 bg-black" />
+                  <span className="block h-[2px] w-5 bg-black" />
+                </div>
+              </aside>
 
-        <div className="relative mx-auto max-w-[1320px] px-4 pt-16 lg:px-6 lg:pt-24">
-          <span className="label-tech inline-flex items-center gap-2 border border-[var(--color-brand)] px-3 py-1.5 text-[var(--color-brand-strong)]">
-            <span className="h-1.5 w-1.5 bg-[var(--color-brand)]" />
-            Nền tảng đấu giá trực tuyến
-          </span>
+              {/* Nội dung: thanh số bước + danh sách item */}
+              <div className="min-w-0 flex-1">
+                {/* Thanh bước 01–05 — Adidas style: black bg, white text, red active */}
+                <div className="flex overflow-x-auto border-b border-[var(--color-line)] bg-black">
+                  {STEPS.map((s) => {
+                    const on = activeStep === s.target
+                    return (
+                      <button
+                        key={s.n}
+                        onClick={() => goTo(s.target)}
+                        className={`min-w-[104px] shrink-0 border-r border-white/10 px-4 py-3 text-left transition-colors last:border-r-0 ${on ? 'bg-white' : 'bg-black hover:bg-black/80'}`}
+                      >
+                        <span className={`block font-[var(--font-mono)] text-[11px] font-bold ${on ? 'text-[var(--color-brand)]' : 'text-white/70'}`}>
+                          {s.n}
+                        </span>
+                        <span className={`mt-0.5 block text-[10px] font-bold uppercase tracking-[0.14em] ${on ? 'text-black' : 'text-white/55'}`}>
+                          {s.label}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
 
-          <h1 className="mt-6 max-w-[15ch] font-[var(--font-mono)] text-[40px] font-bold uppercase leading-[1.02] tracking-[0.01em] text-[var(--color-text)] sm:text-[64px] lg:text-[84px]">
-            Mỗi lượt đặt giá.
-            <br />
-            <span className="text-[var(--color-brand-strong)]">Một giá trị thật.</span>
-          </h1>
+                {/* Danh sách item ảnh + text */}
+                <div className="divide-y divide-[var(--color-line)]">
+                  {FEATURED.map((f, i) => {
+                    const on = i === 0
+                    return (
+                      <button
+                        key={f.name}
+                        onClick={() => navigate('/items')}
+                        className={`flex w-full items-center gap-4 px-4 py-5 text-left transition-colors ${on ? 'bg-[var(--color-bg-elev)]' : 'hover:bg-[var(--color-bg-elev)]'}`}
+                      >
+                        {/* Khối ảnh thumbnail sản phẩm */}
+                        <span className="grid h-20 w-24 shrink-0 place-items-center overflow-hidden border border-[var(--color-line)] bg-white">
+                          <img src={motorcycle} alt="" className="h-full w-full object-contain p-1.5" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className={`block font-[var(--font-display)] text-[18px] font-black uppercase leading-tight ${on ? 'text-[var(--color-brand)]' : 'text-black'}`}>
+                            {f.name}
+                          </span>
+                          <span className="mt-1 block text-[11px] text-[var(--color-text-muted)]">
+                            {f.desc}
+                          </span>
+                          <span className="mt-1 block font-[var(--font-mono)] text-[12px] text-black">
+                            {f.price}
+                          </span>
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <p className="max-w-[560px] text-[15px] leading-7 text-[var(--color-text-muted)]">
-              Nơi hội tụ những phiên đấu giá được tuyển chọn — người bán xác thực, cạnh tranh công bằng,
-              và mọi lượt đặt giá đều được ghi nhận minh bạch.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                to={isAuthenticated ? '/me' : '/register'}
-                className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
-              >
-                Bắt đầu đấu giá
-              </Link>
-              <a
-                href="#explore"
-                className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-line-strong)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text)] transition-colors hover:border-[var(--color-brand)] hover:text-[var(--color-brand-strong)]"
-              >
-                Khám phá phiên
-              </a>
+                {/* Footer panel trái: link phụ */}
+                <div className="flex items-center gap-5 px-4 py-5 text-[var(--color-text-muted)]">
+                  <span className="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.16em]">@auction.vn</span>
+                  <span className="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.16em]">FAQ</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Trạng thái hệ thống */}
-          <div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-3 border-t border-dashed border-[var(--color-line-strong)] pt-5">
-            <span className="label-tech inline-flex items-center gap-2 text-[var(--color-text-dim)]">
-              <span className="h-1.5 w-1.5 bg-[var(--color-brand)]" /> Sẵn sàng
-            </span>
-            <span className="label-tech text-[var(--color-text-dim)]">PHIÊN LIÊN TỤC · 12.842</span>
-            <span className="label-tech text-[var(--color-text-dim)]">DANH MỤC · 240</span>
-            <span className="label-tech text-[var(--color-text-dim)]">NGƯỜI DÙNG · 5.2k</span>
-          </div>
+          {/* ---------- PANEL PHẢI (white, minimal) ---------- */}
+          <div id="featured" className="relative min-h-[78vh] overflow-hidden bg-white">
+            {/* Nav trên cùng bên phải */}
+            <div className="relative z-20 flex items-center justify-end gap-6 px-8 pt-6">
+              {['Khám phá', 'Về chúng tôi', 'Liên hệ'].map((t) => (
+                <a key={t} href="#" className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black">
+                  {t}
+                </a>
+              ))}
+              <a href="#" aria-label="Tìm kiếm" className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black">⌕</a>
+              <a href="#" aria-label="Thông báo" className="text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black">◔</a>
+            </div>
 
-          {/* Ô "packet" danh mục — lưới kỹ thuật */}
-          <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-3">
-            {heroTiles.map((tile) => (
-              <div key={tile.code} className="group relative bg-[var(--color-bg)] p-6 transition-colors hover:bg-[var(--color-surface)]">
-                <svg viewBox="0 0 120 90" className="h-24 w-full text-[var(--color-brand)] opacity-30 transition-opacity group-hover:opacity-60" fill="none" stroke="currentColor" strokeWidth="1">
-                  <rect x="1" y="1" width="118" height="88" />
-                  <path d="M1 61h30l10-10h48" strokeDasharray="4 3" />
-                  <path d="M119 29h-24l-12 12H1" strokeDasharray="4 3" />
-                </svg>
-                <div className="mt-5 flex items-center justify-between">
-                  <span className="font-[var(--font-mono)] text-[13px] font-bold tracking-[0.14em] text-[var(--color-text)]">
-                    {tile.code} · {tile.label}
-                  </span>
-                  <span className="text-[var(--color-brand-strong)] transition-transform group-hover:translate-x-1">→</span>
-                </div>
-                <p className="label-tech mt-2 text-[var(--color-text-dim)]">{tile.meta}</p>
-              </div>
-            ))}
+            {/* Wordmark khổng lồ mờ phía sau vật thể */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[42%] z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-[var(--font-display)] text-[clamp(80px,17vw,240px)] font-black uppercase leading-none tracking-[0.02em] text-black/[0.04]"
+            >
+              Auction
+            </span>
+
+            {/* Vật thể trung tâm: ảnh sản phẩm chủ lực */}
+            <div className="relative z-10 flex min-h-[62vh] items-center justify-center px-8">
+              <img
+                src={motorcycle}
+                alt="Sản phẩm chủ lực của phiên đấu giá"
+                className="w-full max-w-[620px] object-contain"
+              />
+            </div>
+
+            {/* Caption nhỏ trái + 360° phải */}
+            <div className="relative z-20 flex items-center justify-between px-8 pb-6">
+              <span className="text-[12px] font-bold uppercase tracking-[0.22em] text-black">Phiên chủ lực · 01</span>
+              <button onClick={() => goTo('explore')} className="grid h-12 w-12 place-items-center border border-black text-[12px] font-bold uppercase tracking-[0.08em] text-black transition-colors hover:bg-black hover:text-white">
+                360°
+              </button>
+            </div>
+
+            {/* Thanh CTA 2 khối ở đáy: TỔNG QUAN (trắng) + ĐẶT GIÁ (đỏ) */}
+            <div className="relative z-20 grid grid-cols-2 border-t border-[var(--color-line)]">
+              <button
+                onClick={() => goTo('how')}
+                className="cta-btn border-r border-[var(--color-line)] bg-white py-6 text-center font-[var(--font-display)] text-[14px] font-black uppercase tracking-[0.2em] text-black transition-colors hover:bg-[var(--color-bg-elev)]"
+              >
+                Tổng quan
+              </button>
+              <button
+                onClick={() => navigate(isAuthenticated ? '/items' : '/register')}
+                className="cta-btn cta-btn-brand bg-[var(--color-brand)] py-6 text-center font-[var(--font-display)] text-[14px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-[var(--color-brand-strong)]"
+              >
+                Đặt giá
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ===================== PHIÊN NỔI BẬT ===================== */}
-      <section className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="label-tech text-[var(--color-brand-strong)]">Phiên nổi bật</p>
-            <h2 className="mt-3 text-[30px] font-black leading-tight tracking-tight text-[var(--color-text)] sm:text-[40px]">
-              Một phiên đấu giá
-              <br />
-              <span className="text-[var(--color-text-dim)]">đang nóng lên.</span>
-            </h2>
-            <p className="mt-4 max-w-[480px] text-[14px] leading-6 text-[var(--color-text-muted)]">
-              Theo dõi giá theo thời gian thực và chốt ưu thế trước khi đồng hồ kết thúc.
-            </p>
-            <div className="mt-8 grid grid-cols-3 gap-px border border-[var(--color-line)] bg-[var(--color-line)]">
-              {[['98%', 'Thành công'], ['24/7', 'Hỗ trợ'], ['5.2k', 'Người dùng']].map(([v, l]) => (
-                <div key={l} className="bg-[var(--color-bg)] px-4 py-5">
-                  <p className="font-[var(--font-mono)] text-[24px] font-bold text-[var(--color-text)]">{v}</p>
-                  <p className="label-tech mt-1 text-[var(--color-text-dim)]">{l}</p>
+      {/* ============ CÁCH HOẠT ĐỘNG ============ */}
+      <section id="how" className="border-b border-[var(--color-line)]">
+        <div className="container-page py-16">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="font-[var(--font-mono)] text-[12px] uppercase tracking-[0.2em] text-[var(--color-brand)]">02 — Cách hoạt động</p>
+              <h2 className="mt-4 font-[var(--font-display)] text-[34px] font-black leading-[1.02] tracking-[-0.02em] text-black sm:text-[46px]">
+                Bốn bước để chốt phiên.
+              </h2>
+            </div>
+            <div className="grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-2">
+              {[
+                { n: '01', t: 'Đăng nhập', d: 'Tạo tài khoản hoặc đăng nhập để theo dõi phiên.' },
+                { n: '02', t: 'Chọn món', d: 'Lọc theo danh mục và đọc kỹ thông tin phiên đấu giá.' },
+                { n: '03', t: 'Đặt giá', d: 'Trả giá theo thời gian thực, hệ thống cập nhật tức thời.' },
+                { n: '04', t: 'Chốt phiên', d: 'Người trả cao nhất thắng khi đồng hồ đếm ngược về 0.' },
+              ].map((s) => (
+                <div key={s.n} className="bg-white p-7 transition-colors hover:bg-[var(--color-bg-elev)]">
+                  <span className="font-[var(--font-mono)] text-[12px] font-bold text-[var(--color-brand)]">{s.n}</span>
+                  <h3 className="mt-3 font-[var(--font-display)] text-[20px] font-black uppercase leading-tight text-black">{s.t}</h3>
+                  <p className="desc-long mt-2 text-[13px] text-[var(--color-text-muted)]">{s.d}</p>
                 </div>
               ))}
             </div>
-            <Link
-              to={isAuthenticated ? '/me' : '/register'}
-              className="mt-8 inline-flex items-center gap-2 border-b-2 border-[var(--color-brand)] pb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text)] transition-colors hover:text-[var(--color-brand-strong)]"
-            >
-              Tạo phiên đấu giá →
-            </Link>
-          </div>
-
-          {/* Card phiên nổi bật */}
-          <div className="rounded-[var(--radius)] border border-[var(--color-line)] bg-[var(--color-surface)] p-3">
-            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden border border-[var(--color-line)] bg-[var(--color-bg)]">
-              <div aria-hidden className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 bg-[var(--color-brand)] px-3 py-1 font-[var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-on-brand)]">
-                <span className="h-1.5 w-1.5 bg-[var(--color-on-brand)]" /> Sắp kết thúc
-              </span>
-              <div className="relative grid h-40 w-40 rotate-45 place-items-center border border-[var(--color-line-strong)]">
-                <div className="grid h-32 w-32 place-items-center border border-[var(--color-line-strong)]">
-                  <span className="-rotate-45 font-[var(--font-mono)] text-[30px] font-bold tracking-tighter text-[var(--color-brand)]">PS5</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-3 flex items-end justify-between gap-4 px-2">
-              <div>
-                <p className="label-tech text-[var(--color-text-dim)]">{featured.title} · giá hiện tại</p>
-                <p className="mt-1 font-[var(--font-mono)] text-[22px] font-bold text-[var(--color-text)]">{formatVND(featured.price)}</p>
-              </div>
-              <div className="text-right">
-                <p className="label-tech text-[var(--color-brand-strong)]">Còn lại</p>
-                <p className="mt-1 font-[var(--font-mono)] text-[20px] font-bold text-[var(--color-text)]">{countdown}</p>
-              </div>
-            </div>
-            <Link
-              to="/login"
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
-            >
-              Xem phiên đấu giá →
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* ===================== DANH MỤC ===================== */}
-      <section id="categories" className="border-y border-[var(--color-line)] bg-[var(--color-surface)]">
-        <div className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24" id="explore">
+      {/* ============ DANH MỤC ============ */}
+      <section id="categories" className="border-b border-[var(--color-line)]">
+        <div className="container-page py-16">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="label-tech text-[var(--color-brand-strong)]">Khám phá</p>
-              <h2 className="mt-3 text-[28px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Danh mục nổi bật</h2>
+              <p className="font-[var(--font-mono)] text-[12px] uppercase tracking-[0.2em] text-[var(--color-brand)]">03 — Danh mục</p>
+              <h2 className="mt-4 font-[var(--font-display)] text-[34px] font-black tracking-[-0.02em] text-black sm:text-[46px]">
+                Theo lĩnh vực.
+              </h2>
             </div>
-            <p className="label-tech text-[var(--color-text-dim)]">Hơn 4.900 phiên đang mở</p>
+            <Link to="/items" className="font-[var(--font-mono)] text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors hover:text-black">
+              Xem tất cả →
+            </Link>
           </div>
 
-          <div className="mt-8 grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((c) => (
-              <div key={c.name} className="group bg-[var(--color-bg)] p-5 transition-colors hover:bg-[var(--color-surface)]">
-                <div className="flex items-start justify-between">
-                  <p className="text-[16px] font-semibold text-[var(--color-text)]">{c.name}</p>
-                  <span className="text-[var(--color-text-dim)] transition-colors group-hover:text-[var(--color-brand-strong)]">→</span>
-                </div>
-                <p className="mt-2 text-[12px] text-[var(--color-text-dim)]">{c.desc}</p>
-                <p className="label-tech mt-4 text-[var(--color-brand-strong)]">{c.count}</p>
-              </div>
+          <div className="mt-10 grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] sm:grid-cols-2 lg:grid-cols-4">
+            {CATEGORIES.map((c) => (
+              <Link key={c.name} to="/items" className="group relative flex min-h-[220px] flex-col justify-between bg-white p-6 transition-colors hover:bg-[var(--color-bg-elev)]">
+                <span aria-hidden className="text-[34px] leading-none text-[var(--color-brand)]">{c.glyph}</span>
+                <span>
+                  <span className="block font-[var(--font-display)] text-[20px] font-black uppercase leading-tight text-black group-hover:text-[var(--color-brand)]">
+                    {c.name}
+                  </span>
+                  <span className="mt-2 block font-[var(--font-mono)] text-[12px] uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+                    {c.count} phiên đang mở
+                  </span>
+                </span>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ===================== CÁCH HOẠT ĐỘNG ===================== */}
-      <section id="how" className="mx-auto max-w-[1320px] px-4 py-16 lg:px-6 lg:py-24">
-        <p className="label-tech text-[var(--color-brand-strong)]">Cách hoạt động</p>
-        <h2 className="mt-3 text-[28px] font-black tracking-tight text-[var(--color-text)] sm:text-[38px]">Từ đăng ký đến chốt giá</h2>
-
-        <div className="mt-8 grid gap-px overflow-hidden border border-[var(--color-line)] bg-[var(--color-line)] lg:grid-cols-3">
-          {steps.map((s) => (
-            <div key={s.n} className="bg-[var(--color-bg)] p-6">
-              <p className="font-[var(--font-mono)] text-[12px] font-bold tracking-[0.14em] text-[var(--color-brand-strong)]">{s.n} — {s.tag}</p>
-              <h3 className="mt-3 text-[17px] font-semibold text-[var(--color-text)]">{s.title}</h3>
-              <p className="mt-2 text-[13px] leading-6 text-[var(--color-text-dim)]">{s.desc}</p>
-              <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
-                {s.links.map(([label, to]) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    className="text-[12px] font-semibold text-[var(--color-brand-strong)] transition-colors hover:text-[var(--color-text)]"
-                  >
-                    {label} →
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===================== CTA ===================== */}
-      <section className="mx-auto max-w-[1320px] px-4 pb-24 lg:px-6">
-        <div className="relative overflow-hidden rounded-[var(--radius)] border border-[var(--color-brand)] px-6 py-12 text-center lg:px-16 lg:py-16">
-          <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[var(--color-brand)]" />
-          <h2 className="relative text-[26px] font-black tracking-tight text-[var(--color-text)] sm:text-[36px]">
-            Sẵn sàng chốt phiên tiếp theo?
+      {/* ============ CTA ============ */}
+      <section id="cta" className="relative overflow-hidden bg-black">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-[var(--font-display)] text-[clamp(70px,16vw,220px)] font-black uppercase leading-none text-white/[0.06]"
+        >
+          Auction
+        </span>
+        <div className="container-page relative z-10 py-20 text-center">
+          <p className="font-[var(--font-mono)] text-[12px] uppercase tracking-[0.22em] text-[var(--color-brand)]">05 — Tham gia</p>
+          <h2 className="mx-auto mt-5 max-w-[20ch] font-[var(--font-display)] text-[38px] font-black leading-[1.02] tracking-[-0.02em] text-white sm:text-[58px]">
+            Sẵn sàng chốt <span className="text-[var(--color-brand)]">phiên tiếp theo?</span>
           </h2>
-          <p className="relative mx-auto mt-4 max-w-[520px] text-[14px] text-[var(--color-text-muted)]">
-            Tạo tài khoản miễn phí và bắt đầu theo dõi những phiên đấu giá giá trị thật ngay hôm nay.
-          </p>
-          <Link
-            to={isAuthenticated ? '/me' : '/register'}
-            className="relative mt-8 inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-6 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
-          >
-            {isAuthenticated ? 'Vào hồ sơ của tôi' : 'Đăng ký miễn phí'}
-          </Link>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-px">
+            <Link to={isAuthenticated ? '/me' : '/register'} className="cta-btn bg-white px-10 py-4 font-[var(--font-display)] text-[13px] font-black uppercase tracking-[0.2em] text-black transition-colors hover:bg-[var(--color-bg-elev)]">
+              {isAuthenticated ? 'Vào tài khoản' : 'Đăng ký miễn phí'}
+            </Link>
+            <Link to="/items" className="cta-btn cta-btn-brand bg-[var(--color-brand)] px-10 py-4 font-[var(--font-display)] text-[13px] font-black uppercase tracking-[0.2em] text-white transition-colors hover:bg-[var(--color-brand-strong)]">
+              Xem phiên đang mở
+            </Link>
+          </div>
         </div>
       </section>
     </div>

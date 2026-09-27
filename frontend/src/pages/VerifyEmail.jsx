@@ -38,7 +38,7 @@ export default function VerifyEmail() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6">
+    <div className="container-page flex min-h-[70vh] items-start justify-center py-12 lg:py-16">
       <AuthCard
         eyebrow="Bảo mật tài khoản"
         title="Xác thực email"
@@ -46,7 +46,7 @@ export default function VerifyEmail() {
         footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <Alert>{error}</Alert>
+          <Alert type="error">{error}</Alert>
           {msg && <Alert type="success">{msg}</Alert>}
           <Field label="Token xác thực">
             <TextInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="Dán token từ email" />

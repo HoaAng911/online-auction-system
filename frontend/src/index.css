@@ -1,71 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 
 /* ============================================================
    AUCTION.VN — Design System
-   Phong cách: Technical print — giấy trắng + mực đen + vàng gold
-   Một accent duy nhất (gold). Đường kẻ mảnh như bản vẽ kỹ thuật.
+   Phong cách: Adidas / Sport Minimal
+   Nền trắng, chữ đen, đỏ accent. Sans-serif đậm, nhiều whitespace.
    ============================================================ */
 
 @theme {
-  /* --- Accent: vàng gold duy nhất --- */
-  --color-brand: #c99a2e;         /* gold — accent chính */
-  --color-brand-strong: #a97e1f;  /* gold đậm — hover */
-  --color-brand-hover: #b88a24;
-  --color-accent: #c99a2e;        /* giữ alias để không vỡ class cũ */
-  --color-accent-soft: #e6c976;   /* gold nhạt */
+  /* --- Accent: đỏ Adidas --- */
+  --color-brand: #D4213D;         /* đỏ — accent chính */
+  --color-brand-strong: #B01A33;  /* đỏ đậm — hover/active */
+  --color-brand-hover: #C41E38;
+  --color-accent: #D4213D;        /* alias để không vỡ class cũ */
+  --color-accent-soft: #F5E6EA;   /* đỏ nhạt — nền nhẹ */
 
-  /* --- Nền: giấy trắng nhiều tầng --- */
-  --color-bg: #f7f5f0;            /* nền trang — giấy ấm nhẹ */
-  --color-bg-elev: #ffffff;       /* nền section nổi */
-  --color-surface: #ffffff;       /* card/panel */
-  --color-surface-2: #efece4;     /* card lồng / header */
-  --color-line: #ddd8cc;          /* viền mảnh */
-  --color-line-strong: #c4bdae;   /* viền hover */
+  /* --- Nền: trắng sáng --- */
+  --color-bg: #FFFFFF;            /* nền trang — trắng */
+  --color-bg-elev: #F7F7F8;       /* nền section nổi */
+  --color-surface: #FFFFFF;       /* card/panel */
+  --color-surface-2: #F0F0F2;     /* card lồng / header */
+  --color-line: #E5E5E7;          /* viền mỏng */
+  --color-line-strong: #D1D1D3;   /* viền hover */
 
-  /* --- Tile/hero: tông giấy xám, không gradient tối --- */
-  --tile-1-a: #efece4;
-  --tile-1-b: #e7e2d6;
-  --tile-2-a: #e9e5da;
-  --tile-2-b: #e0dbcd;
-  --tile-3-a: #ece7dc;
-  --tile-3-b: #e3ddcf;
-
-  /* --- Text: mực in --- */
-  --color-text: #1b1916;          /* text chính — mực đen ấm */
-  --color-text-muted: #6b6558;    /* text phụ, label */
-  --color-text-dim: #96907f;      /* text mờ, meta */
-  --color-on-brand: #ffffff;      /* chữ trên nền gold */
+  /* --- Text: đen trên nền trắng --- */
+  --color-text: #000000;          /* text chính — đen */
+  --color-text-muted: #555555;    /* text phụ, label */
+  --color-text-dim: #888888;      /* text mờ, meta */
+  --color-on-brand: #FFFFFF;      /* chữ trên nền đỏ */
 
   /* --- Trạng thái --- */
-  --color-success: #3f7d52;
-  --color-warning: #b5852a;
-  --color-danger: #b4453b;
+  --color-success: #1A7F4B;
+  --color-warning: #B8860B;
+  --color-danger: #D4213D;
 
-  /* --- Hình khối & bóng: sắc, kỹ thuật --- */
-  --radius: 4px;
-  --radius-sm: 3px;
-  --radius-lg: 6px;
-  --shadow-card: 0 1px 0 rgba(27, 25, 22, 0.02),
-    0 10px 30px -18px rgba(27, 25, 22, 0.28);
-  --ring-focus: 0 0 0 3px rgba(201, 154, 46, 0.28);
+  /* --- Alias tương thích ngược (các biến cũ còn được trang tham chiếu) --- */
+  --color-paper: #FFFFFF;
+  --color-paper-2: #F0F0F2;
+  --color-ink: #000000;
+  --color-ink-soft: #1A1A1A;
+  --color-ink-line: #E5E5E7;
+  --color-ink-muted: #555555;
+  --color-hero: #000000;
+  --color-bg-soft: #F7F7F8;
+  --tile-1-a: #F0F0F2;
+  --tile-1-b: #E5E5E7;
+  --tile-2-a: #F0F0F2;
+  --tile-2-b: #E5E5E7;
+  --tile-3-a: #F0F0F2;
+  --tile-3-b: #E5E5E7;
 
-  /* --- Typography: mono-caps kỹ thuật --- */
+  /* --- Hình khối & bóng: tối giản --- */
+  --radius: 0px;                  /* Adidas: sharp edges */
+  --radius-sm: 0px;
+  --radius-lg: 0px;
+  --radius-pill: 0px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 4px 14px rgba(212, 33, 61, 0.25);
+  --ring-focus: 0 0 0 3px rgba(212, 33, 61, 0.25);
+
+  /* --- Layout & nhịp --- */
+  --container: 1320px;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Typography: sans-serif đậm + clean --- */
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --font-display-soft: "Archivo", Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
     Menlo, Consolas, monospace;
 
   /* --- Motion --- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-fade-up: fade-up 0.7s var(--ease-out-expo) both;
-  --animate-fade-in: fade-in 0.9s var(--ease-out-expo) both;
-  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-fade-up: fade-up 0.6s var(--ease-out-expo) both;
+  --animate-fade-in: fade-in 0.7s var(--ease-out-expo) both;
+  --animate-rise: rise 0.7s var(--ease-out-expo) both;
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -74,27 +90,9 @@
   to { opacity: 1; }
 }
 
-/* Ảnh hero xuất hiện theo chiều dọc, gối nhau */
 @keyframes rise {
-  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  from { opacity: 0; transform: translateY(24px) scale(0.99); }
   to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* --- Chuyển đổi Login <-> Register: mờ dần + trượt nhẹ --- */
-@keyframes auth-in-right {
-  from { opacity: 0; transform: translateX(28px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes auth-in-left {
-  from { opacity: 0; transform: translateX(-28px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Panel ảnh trượt đổi bên: thanh tiến trình chạy 1 lần khi bấm chuyển */
-@keyframes auth-fade-swap {
-  from { opacity: 0; transform: scale(1.04); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 /* --- Base --- */
@@ -111,31 +109,204 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Nhãn kỹ thuật: chữ hoa, giãn ký tự, mono */
+/* Headings: đậm, uppercase, tight tracking — kiểu Adidas */
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+/* Nhãn nhỏ: chữ hoa, giãn ký tự nhẹ */
 .label-tech {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-text-dim);
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   LAYOUT UTILITIES — nhịp khoảng cách nhất quán toàn site
+   ============================================================ */
+.container-page {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 1024px) {
+  .container-page { padding-inline: 2rem; }
+}
+
+/* Nhịp dọc cho mỗi section — co giãn theo màn hình */
+.section-pad { padding-block: clamp(4rem, 8vw, 8rem); }
+.section-pad-tight { padding-block: clamp(2.5rem, 5vw, 4.5rem); }
+
+/* Lưới ô dữ liệu kiểu Adidas: viền mỏng, nền trắng */
+.tech-grid {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-line);
+}
+.tech-cell {
+  background-color: var(--color-surface);
+  transition: background-color 0.2s var(--ease-standard);
+}
+.tech-cell:hover { background-color: var(--color-bg-elev); }
+
+/* Chữ tiêu đề — tracking tinh tế cho khối lớn */
+.display-tight {
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   SOFT TRANSITIONS — gradient chuyển tiếp & chiều sâu cho card
+   ============================================================ */
+
+/* Card sản phẩm / khối nội dung: sharp edges + shadow nhẹ */
+.soft-card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s var(--ease-standard),
+    box-shadow 0.2s var(--ease-standard);
+}
+.soft-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Ảnh sản phẩm: sharp edges + shadow lan tỏa nhẹ */
+.soft-img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s var(--ease-standard),
+    box-shadow 0.25s var(--ease-standard);
+}
+.soft-img:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Nút CTA: sharp edges + hover scale nhẹ */
+.cta-btn {
+  border-radius: var(--radius);
+  transition: background-color 0.2s var(--ease-standard),
+    transform 0.15s var(--ease-standard), box-shadow 0.2s var(--ease-standard);
+}
+.cta-btn:hover {
+  transform: scale(1.02);
+}
+.cta-btn:active {
+  transform: scale(0.98);
+}
+
+/* Nút đỏ (ĐẶT GIÁ): glow effect đỏ mờ */
+.cta-btn-brand {
+  box-shadow: var(--shadow-glow);
+}
+.cta-btn-brand:hover {
+  box-shadow: 0 6px 20px rgba(212, 33, 61, 0.35);
+}
+
+/* Mô tả phụ: chữ thường, xám nhạt — phân cấp typography */
+.desc-soft {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* Đoạn mô tả dài: line-height thoáng 1.6 để dễ đọc */
+.desc-long {
+  line-height: 1.6;
+}
+
+/* ============================================================
+   BUTTONS — base dùng chung để đồng bộ hover/focus/disabled
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.85rem 1.75rem;
+  transition: background-color 0.2s var(--ease-standard),
+    color 0.2s var(--ease-standard), border-color 0.2s var(--ease-standard),
+    box-shadow 0.2s var(--ease-standard), transform 0.15s var(--ease-standard);
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled,
+.btn[aria-disabled='true'] { cursor: not-allowed; opacity: 0.5; }
+
+.btn-primary {
+  background-color: var(--color-brand);
+  color: var(--color-on-brand);
+  box-shadow: 0 4px 14px rgba(212, 33, 61, 0.25);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-brand-strong);
+  box-shadow: 0 6px 20px rgba(212, 33, 61, 0.35);
+}
+
+.btn-ghost {
+  border: 1px solid var(--color-line-strong);
+  color: var(--color-text);
+  background-color: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--color-brand);
+  color: var(--color-brand-strong);
+  background-color: rgba(212, 33, 61, 0.04);
+}
+
+/* ============================================================
+   REVEAL ON SCROLL — fade/trồi nhẹ, tôn trọng reduced-motion
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+  will-change: opacity, transform;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* Trễ hiển thị theo thứ tự để tạo nhịp stagger khi cuộn */
+.reveal-delay-1 { transition-delay: 0.05s; }
+.reveal-delay-2 { transition-delay: 0.1s; }
+.reveal-delay-3 { transition-delay: 0.15s; }
+.reveal-delay-4 { transition-delay: 0.2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* Utility nhỏ cho delay animation theo thứ tự ảnh */
 .anim-delay-1 { animation-delay: 0.05s; }
-.anim-delay-2 { animation-delay: 0.15s; }
-.anim-delay-3 { animation-delay: 0.25s; }
+.anim-delay-2 { animation-delay: 0.1s; }
+.anim-delay-3 { animation-delay: 0.15s; }
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6d0c2;
-  border-radius: 999px;
+  background: #D1D1D3;
+  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c4bdae;
+  background: #000000;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -143,7 +314,7 @@ body {
 
 /* --- Selection --- */
 ::selection {
-  background: rgba(201, 154, 46, 0.25);
+  background: rgba(212, 33, 61, 0.15);
   color: var(--color-text);
 }
 

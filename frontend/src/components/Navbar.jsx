@@ -1,12 +1,26 @@
 import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import NotificationBell from './NotificationBell'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
+// Mọi tab đều trỏ về section trên trang chủ (id tương ứng trong Home.jsx).
+// Dùng chung cơ chế "điều hướng về '/' rồi cuộn tới id" để logic thống nhất.
 const navLinks = [
-  { to: '/', label: 'Khám phá', end: true },
-  { href: '#categories', label: 'Danh mục' },
-  { href: '#how', label: 'Cách hoạt động' },
+  { id: 'explore', label: 'Khám phá' },
+  { id: 'categories', label: 'Danh mục' },
+  { id: 'how', label: 'Cách hoạt động' },
 ]
+
+const HEADER_OFFSET = 64 // chiều cao header sticky
+
+function scrollToSection(id) {
+  const el = document.getElementById(id)
+  if (!el) return
+  const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+  window.scrollTo({ top, behavior: 'smooth' })
+}
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
@@ -20,6 +34,16 @@ export default function Navbar() {
     navigate(`/?q=${encodeURIComponent(q.trim())}`)
   }
 
+  // Click tab: nếu đang ở trang chủ thì cuộn tới section, ngược lại điều hướng về '/' kèm state để Home tự cuộn.
+  const goToSection = (id) => {
+    setOpen(false)
+    if (window.location.pathname === '/') {
+      scrollToSection(id)
+    } else {
+      navigate('/', { state: { scrollTo: id } })
+    }
+  }
+
   const handleLogout = async () => {
     await logout()
     navigate('/')
@@ -28,102 +52,108 @@ export default function Navbar() {
   const initials = (user?.fullName || user?.username || 'HN').slice(0, 2).toUpperCase()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-[var(--color-bg)]/90 backdrop-blur-md">
-      <div className="mx-auto flex h-[64px] max-w-[1320px] items-center gap-4 px-4 lg:px-6">
-        {/* Logo */}
-        <Link to="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-[6px] bg-[var(--color-brand)] font-[var(--font-mono)] text-[14px] font-bold text-[var(--color-on-brand)]">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-white/95 backdrop-blur-md">
+      <div className="container-page flex h-[64px] items-center gap-4">
+        {/* Logo — Adidas style: bold, uppercase, sharp */}
+        <Link to="/" className="group flex shrink-0 items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center bg-black font-display text-[16px] font-black leading-none text-white transition-colors duration-200 group-hover:bg-[var(--color-brand)]">
             A
           </span>
-          <span className="font-[var(--font-mono)] text-[14px] font-bold uppercase tracking-[0.14em]">
-            <span className="text-[var(--color-text)]">AUCTION</span>
-            <span className="text-[var(--color-brand-strong)]">.VN</span>
+          <span className="font-display text-[17px] font-black uppercase tracking-[0.14em]">
+            <span className="text-black">Auction</span>
+            <span className="text-[var(--color-brand)]">.vn</span>
           </span>
         </Link>
 
-        {/* Nav — gạch chân gold khi active */}
-        <nav className="ml-4 hidden items-center gap-6 md:flex">
-          {navLinks.map((l) =>
-            l.to ? (
-              <NavLink
-                key={l.label}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `label-tech border-b-2 pb-1 transition-colors ${isActive
-                    ? 'border-[var(--color-brand)] text-[var(--color-text)]'
-                    : 'border-transparent hover:text-[var(--color-text)]'
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            ) : (
-              <a
-                key={l.label}
-                href={l.href}
-                className="label-tech border-b-2 border-transparent pb-1 transition-colors hover:text-[var(--color-text)]"
-              >
-                {l.label}
-              </a>
-            ),
-          )}
+        {/* Nav — uppercase, tracking rộng, underline đỏ khi active */}
+        <nav className="ml-4 hidden items-center gap-7 md:flex">
+          {navLinks.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => goToSection(l.id)}
+              className="relative py-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-brand)] after:transition-[width] after:duration-200 after:content-[''] hover:text-black hover:after:w-full"
+            >
+              {l.label}
+            </button>
+          ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
           {/* Search */}
           <form
             onSubmit={onSearch}
-            className="hidden items-center gap-2 border-b border-[var(--color-line-strong)] px-1 py-1.5 transition-colors focus-within:border-[var(--color-brand)] sm:flex"
+            className="hidden items-center gap-2 border border-[var(--color-line-strong)] bg-white px-3.5 py-1.5 transition-colors focus-within:border-black sm:flex"
           >
-            <span aria-hidden className="font-[var(--font-mono)] text-[var(--color-text-dim)]">⌕</span>
-            <input
+            <span aria-hidden className="text-[13px] text-[var(--color-text-dim)]">⌕</span>
+            <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Tìm kiếm sản phẩm…"
-              className="w-[190px] bg-transparent text-[13px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-dim)]"
+              className="h-auto w-[180px] border-0 bg-transparent px-0 py-0 text-[13px] shadow-none focus-visible:ring-0"
             />
           </form>
 
           {/* Auth */}
           {!isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <Link to="/login" className="label-tech hidden transition-colors hover:text-[var(--color-text)] sm:inline">
+              <Link to="/login" className="hidden text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline">
                 Đăng nhập
               </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)] transition-colors hover:bg-[var(--color-brand-strong)]"
-              >
-                Đăng tin
-              </Link>
+              <Button asChild size="sm">
+                <Link to="/register">Đăng tin</Link>
+              </Button>
             </div>
           ) : (
             <div className="flex items-center gap-3">
+              <NotificationBell />
               <Link
                 to="/me"
-                className="hidden text-[13px] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)] sm:inline"
+                className="hidden text-[12px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline"
                 title={user?.fullName}
               >
                 {user?.fullName || user?.username}
               </Link>
+              <Link
+                to="/me/payments"
+                className="hidden text-[12px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline"
+              >
+                Thanh toán
+              </Link>
               {isAdmin && (
-                <Link
-                  to="/admin/users"
-                  className="label-tech hidden border border-[var(--color-line-strong)] px-2.5 py-1 transition-colors hover:border-[var(--color-text)] hover:text-[var(--color-text)] sm:inline"
-                >
-                  Quản trị
-                </Link>
+                <span className="hidden items-center gap-2 sm:inline-flex">
+                  <Link
+                    to="/admin/dashboard"
+                    className="border border-[var(--color-brand)] bg-[var(--color-brand)] px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[var(--color-brand-strong)]"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/admin/users"
+                    className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+                  >
+                    Users
+                  </Link>
+                  <Link
+                    to="/admin/settings"
+                    className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+                  >
+                    Cài đặt
+                  </Link>
+                </span>
               )}
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLogout}
-                className="label-tech hidden transition-colors hover:text-[var(--color-danger)] sm:inline"
+                className="hidden text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-danger)] sm:inline"
               >
                 Đăng xuất
-              </button>
+              </Button>
               <Link
                 to="/me"
-                className="grid h-8 w-8 place-items-center rounded-full border border-[var(--color-brand)] font-[var(--font-mono)] text-[11px] font-bold text-[var(--color-brand-strong)]"
+                aria-label="Hồ sơ cá nhân"
+                className="grid h-8 w-8 place-items-center border border-black bg-black text-[11px] font-bold tracking-wide text-white transition-colors hover:bg-[var(--color-brand)] hover:border-[var(--color-brand)]"
               >
                 {initials}
               </Link>
@@ -131,68 +161,85 @@ export default function Navbar() {
           )}
 
           {/* Mobile menu */}
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => setOpen((v) => !v)}
-            className="grid h-9 w-9 place-items-center rounded-[6px] border border-[var(--color-line-strong)] text-[var(--color-text)] md:hidden"
+            className="h-9 w-9 md:hidden"
             aria-label="Menu"
           >
             {open ? '✕' : '☰'}
-          </button>
+          </Button>
         </div>
       </div>
 
       {open && (
-        <div className="border-t border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-4 md:hidden">
+        <div className="animate-fade-up border-t border-[var(--color-line)] bg-white px-4 py-4 md:hidden">
           <form
             onSubmit={onSearch}
             className="mb-4 flex items-center gap-2 border-b border-[var(--color-line-strong)] px-1 py-2"
           >
             <span aria-hidden className="font-[var(--font-mono)] text-[var(--color-text-dim)]">⌕</span>
-            <input
+            <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Tìm kiếm sản phẩm…"
-              className="w-full bg-transparent text-[13px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-dim)]"
+              className="h-auto w-full border-0 bg-transparent px-0 py-0 text-[13px] shadow-none focus-visible:ring-0"
             />
           </form>
           <div className="flex flex-col text-[14px]">
-            {navLinks.map((l) =>
-              l.to ? (
-                <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="border-b border-[var(--color-line)] py-3 text-[var(--color-text-muted)]">
-                  {l.label}
-                </Link>
-              ) : (
-                <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="border-b border-[var(--color-line)] py-3 text-[var(--color-text-muted)]">
-                  {l.label}
-                </a>
-              ),
-            )}
+            {navLinks.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => goToSection(l.id)}
+                className="border-b border-[var(--color-line)] py-3 text-left text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+              >
+                {l.label}
+              </button>
+            ))}
             {!isAuthenticated ? (
               <div className="mt-4 flex flex-col gap-3">
-                <Link to="/login" onClick={() => setOpen(false)} className="text-center text-[var(--color-text)]">
+                <Link to="/login" onClick={() => setOpen(false)} className="text-center text-[13px] font-bold uppercase tracking-[0.08em] text-black">
                   Đăng nhập
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setOpen(false)}
-                  className="rounded-[var(--radius-sm)] bg-[var(--color-brand)] px-4 py-2.5 text-center text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--color-on-brand)]"
-                >
-                  Đăng tin
-                </Link>
+                <Button asChild className="w-full">
+                  <Link to="/register" onClick={() => setOpen(false)}>
+                    Đăng tin
+                  </Link>
+                </Button>
               </div>
             ) : (
               <div className="mt-4 flex flex-col gap-3">
-                <Link to="/me" onClick={() => setOpen(false)} className="text-[var(--color-text)]">
+                <Link to="/me" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
                   Hồ sơ
                 </Link>
+                <Link to="/me/payments" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                  Thanh toán của tôi
+                </Link>
+                <Link to="/notifications" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                  Thông báo
+                </Link>
                 {isAdmin && (
-                  <Link to="/admin/users" onClick={() => setOpen(false)} className="text-[var(--color-text)]">
-                    Quản trị
-                  </Link>
+                  <>
+                    <Link to="/admin/dashboard" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Dashboard
+                    </Link>
+                    <Link to="/admin/users" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Quản trị users
+                    </Link>
+                    <Link to="/admin/settings" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Cài đặt hệ thống
+                    </Link>
+                  </>
                 )}
-                <button onClick={handleLogout} className="text-left text-[var(--color-danger)]">
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="justify-start px-0 text-left text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--color-danger)] hover:text-[var(--color-danger)]"
+                >
                   Đăng xuất
-                </button>
+                </Button>
               </div>
             )}
           </div>
