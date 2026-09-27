@@ -1,68 +1,131 @@
-export function Field({ label, error, children, hint }) {
+/* ============================================================
+   UI kit dùng chung — refactor trên nền shadcn/ui primitives.
+   Giữ nguyên API cũ (Field, TextInput, PrimaryButton, GhostButton,
+   Alert, Card, StatCell, Eyebrow, AuthCard) để không phá vỡ
+   các trang đang import. Theme vẫn lấy design token trong index.css.
+   ============================================================ */
+
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Card as ShadCard } from './ui/card'
+import { Alert as ShadAlert } from './ui/alert'
+import { Label } from './ui/label'
+
+export function Field({ label, error, children, hint, htmlFor }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-[12px] font-semibold uppercase tracking-wider text-zinc-400">
+    <div className="block">
+      <Label htmlFor={htmlFor} className="label-tech mb-2 block">
         {label}
-      </span>
+      </Label>
       {children}
-      {hint && !error && <span className="mt-1 block text-[12px] text-zinc-500">{hint}</span>}
-      {error && <span className="mt-1 block text-[12px] text-red-400">{error}</span>}
-    </label>
+      {hint && !error && (
+        <span className="mt-1.5 block text-[12px] text-[var(--color-text-dim)]">{hint}</span>
+      )}
+      {error && (
+        <span className="mt-1.5 block text-[12px] text-[var(--color-danger)]">{error}</span>
+      )}
+    </div>
   )
 }
 
-export function TextInput(props) {
-  return (
-    <input
-      {...props}
-      className={`w-full rounded-lg border bg-[var(--color-surface)] px-3.5 py-2.5 text-[14px] text-white placeholder:text-zinc-600 outline-none transition focus:border-[var(--color-brand)] focus:ring-4 focus:ring-[var(--color-brand)]/15 ${props.className || 'border-[var(--color-line)]'
-        }`}
-    />
-  )
+export function TextInput({ className = '', ...props }) {
+  return <Input className={className} {...props} />
 }
 
-export function PrimaryButton({ children, loading, ...props }) {
+export function PrimaryButton({ children, loading, className = '', ...props }) {
   return (
-    <button
+    <Button
       {...props}
       disabled={loading || props.disabled}
-      className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2.5 text-[14px] font-semibold text-white shadow-[0_10px_30px_-12px_rgba(37,99,235,0.8)] transition hover:bg-[var(--color-brand-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+      aria-busy={loading || undefined}
+      className={`w-full ${className}`}
     >
-      {loading ? 'Đang xử lý...' : children}
-    </button>
+      {loading ? 'Đang xử lý…' : children}
+    </Button>
   )
 }
 
-export function GhostButton({ children, ...props }) {
+export function GhostButton({ children, className = '', ...props }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       {...props}
-      className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--color-line)] bg-white/[0.02] px-4 py-2.5 text-[14px] font-semibold text-white transition hover:border-white/25 hover:bg-white/[0.05]"
+      className={`w-full ${className}`}
     >
       {children}
-    </button>
+    </Button>
   )
+}
+
+const ALERT_VARIANTS = {
+  error: 'destructive',
+  success: 'success',
+  warning: 'warning',
 }
 
 export function Alert({ type = 'error', children }) {
   if (!children) return null
-  const styles =
-    type === 'error'
-      ? 'border-red-500/40 bg-red-500/10 text-red-300'
-      : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-  return <div className={`rounded-lg border px-3.5 py-2.5 text-[13px] ${styles}`}>{children}</div>
+  return (
+    <ShadAlert variant={ALERT_VARIANTS[type] || 'destructive'}>
+      <span aria-hidden className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+      <span>{children}</span>
+    </ShadAlert>
+  )
+}
+
+/* Panel nền tảng — viền hairline, bo góc lớn, bóng mềm rất nhẹ */
+export function Card({ children, className = '' }) {
+  return <ShadCard className={className}>{children}</ShadCard>
+}
+
+/* Khung dữ liệu — nhãn nhỏ + giá trị số serif thanh lịch */
+export function StatCell({ label, value, className = '' }) {
+  return (
+    <div className={`flex flex-col gap-2 p-5 sm:p-6 ${className}`}>
+      <span className="label-tech">{label}</span>
+      <span className="font-display text-[clamp(24px,3vw,32px)] font-semibold leading-none tracking-[-0.01em] text-[var(--color-text)]">
+        {value}
+      </span>
+    </div>
+  )
+}
+
+/* Nhãn nhỏ phía trên tiêu đề section — chữ hoa giãn nhẹ, có gạch đồng */
+export function Eyebrow({ children, className = '' }) {
+  return (
+    <p
+      className={`inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-strong)] ${className}`}
+    >
+      <span aria-hidden className="h-[1px] w-7 bg-[var(--color-brand)]" />
+      {children}
+    </p>
+  )
 }
 
 export function AuthCard({ eyebrow, title, subtitle, children, footer }) {
   return (
-    <div className="mx-auto w-full max-w-[440px]">
-      <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] sm:p-8">
-        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--color-accent)]">{eyebrow}</p>
-        <h1 className="mt-2 text-[24px] font-bold text-white">{title}</h1>
-        {subtitle && <p className="mt-1 text-[13px] text-zinc-400">{subtitle}</p>}
-        <div className="mt-6 flex flex-col gap-4">{children}</div>
-        {footer && <div className="mt-6 border-t border-[var(--color-line)] pt-4 text-[13px] text-zinc-400">{footer}</div>}
-      </div>
+    <div className="mx-auto w-full max-w-[460px]">
+      <ShadCard className="overflow-hidden rounded-[var(--radius-lg)]">
+        {/* thanh đồng mảnh trên đỉnh — dấu nhận diện thương hiệu */}
+        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent" />
+        <div className="p-6 sm:p-10">
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+          <h1 className="display-tight font-display mt-3 text-[clamp(26px,5vw,32px)] font-semibold text-[var(--color-text)]">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-3 text-[13.5px] leading-relaxed text-[var(--color-text-muted)]">
+              {subtitle}
+            </p>
+          )}
+          <div className="mt-9 flex flex-col gap-4">{children}</div>
+          {footer && (
+            <div className="mt-9 border-t border-[var(--color-line)] pt-6 text-[13px] text-[var(--color-text-muted)]">
+              {footer}
+            </div>
+          )}
+        </div>
+      </ShadCard>
     </div>
   )
 }

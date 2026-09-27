@@ -27,15 +27,15 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6">
+    <div className="container-page flex min-h-[70vh] items-start justify-center py-12 lg:py-16">
       <AuthCard
         eyebrow="Khôi phục truy cập"
         title="Quên mật khẩu"
         subtitle="Nhập email đăng ký để nhận link đặt lại mật khẩu."
-        footer={<Link to="/login" className="font-semibold text-[#0a66ff] hover:underline">Quay lại đăng nhập →</Link>}
+        footer={<Link to="/login" className="font-semibold text-[var(--color-accent)] hover:underline">Quay lại đăng nhập →</Link>}
       >
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <Alert>{error}</Alert>
+          <Alert type="error">{error}</Alert>
           {msg && <Alert type="success">{msg}</Alert>}
           <Field label="Email">
             <TextInput value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ban@email.com" autoComplete="email" />

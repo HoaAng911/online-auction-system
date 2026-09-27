@@ -1,12 +1,26 @@
 import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import NotificationBell from './NotificationBell'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
 
+// Mọi tab đều trỏ về section trên trang chủ (id tương ứng trong Home.jsx).
+// Dùng chung cơ chế "điều hướng về '/' rồi cuộn tới id" để logic thống nhất.
 const navLinks = [
-  { to: '/', label: 'Khám phá', end: true },
-  { href: '#categories', label: 'Danh mục' },
-  { href: '#how', label: 'Cách hoạt động' },
+  { id: 'explore', label: 'Khám phá' },
+  { id: 'categories', label: 'Danh mục' },
+  { id: 'how', label: 'Cách hoạt động' },
 ]
+
+const HEADER_OFFSET = 64 // chiều cao header sticky
+
+function scrollToSection(id) {
+  const el = document.getElementById(id)
+  if (!el) return
+  const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+  window.scrollTo({ top, behavior: 'smooth' })
+}
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
@@ -20,6 +34,16 @@ export default function Navbar() {
     navigate(`/?q=${encodeURIComponent(q.trim())}`)
   }
 
+  // Click tab: nếu đang ở trang chủ thì cuộn tới section, ngược lại điều hướng về '/' kèm state để Home tự cuộn.
+  const goToSection = (id) => {
+    setOpen(false)
+    if (window.location.pathname === '/') {
+      scrollToSection(id)
+    } else {
+      navigate('/', { state: { scrollTo: id } })
+    }
+  }
+
   const handleLogout = async () => {
     await logout()
     navigate('/')
@@ -28,99 +52,108 @@ export default function Navbar() {
   const initials = (user?.fullName || user?.username || 'HN').slice(0, 2).toUpperCase()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-[var(--color-bg)]/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-[64px] max-w-[1320px] items-center gap-4 px-4 lg:px-6">
-        {/* Logo */}
-        <Link to="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] text-[14px] font-black text-[#04101f] shadow-[0_0_20px_-4px_var(--color-brand)]">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-white/95 backdrop-blur-md">
+      <div className="container-page flex h-[64px] items-center gap-4">
+        {/* Logo — Adidas style: bold, uppercase, sharp */}
+        <Link to="/" className="group flex shrink-0 items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center bg-black font-display text-[16px] font-black leading-none text-white transition-colors duration-200 group-hover:bg-[var(--color-brand)]">
             A
           </span>
-          <span className="text-[15px] font-bold tracking-tight">
-            <span className="text-white">AUCTION</span>
-            <span className="text-[var(--color-accent)]">.VN</span>
+          <span className="font-display text-[17px] font-black uppercase tracking-[0.14em]">
+            <span className="text-black">Auction</span>
+            <span className="text-[var(--color-brand)]">.vn</span>
           </span>
         </Link>
 
-        {/* Nav — pill kiểu Northwall */}
-        <nav className="ml-4 hidden items-center gap-1 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 p-1 text-[13px] font-medium text-zinc-400 md:flex">
-          {navLinks.map((l) =>
-            l.to ? (
-              <NavLink
-                key={l.label}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `rounded-full px-3.5 py-1.5 transition-colors ${isActive ? 'bg-white/10 text-white' : 'hover:text-white'
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            ) : (
-              <a key={l.label} href={l.href} className="rounded-full px-3.5 py-1.5 transition-colors hover:text-white">
-                {l.label}
-              </a>
-            ),
-          )}
+        {/* Nav — uppercase, tracking rộng, underline đỏ khi active */}
+        <nav className="ml-4 hidden items-center gap-7 md:flex">
+          {navLinks.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => goToSection(l.id)}
+              className="relative py-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-0 after:bg-[var(--color-brand)] after:transition-[width] after:duration-200 after:content-[''] hover:text-black hover:after:w-full"
+            >
+              {l.label}
+            </button>
+          ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
           {/* Search */}
           <form
             onSubmit={onSearch}
-            className="hidden items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 px-3.5 py-1.5 transition-colors focus-within:border-[var(--color-brand)] sm:flex"
+            className="hidden items-center gap-2 border border-[var(--color-line-strong)] bg-white px-3.5 py-1.5 transition-colors focus-within:border-black sm:flex"
           >
-            <span className="text-zinc-500">⌕</span>
-            <input
+            <span aria-hidden className="text-[13px] text-[var(--color-text-dim)]">⌕</span>
+            <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Tìm kiếm sản phẩm..."
-              className="w-[200px] bg-transparent text-[13px] text-white outline-none placeholder:text-zinc-500"
+              placeholder="Tìm kiếm sản phẩm…"
+              className="h-auto w-[180px] border-0 bg-transparent px-0 py-0 text-[13px] shadow-none focus-visible:ring-0"
             />
           </form>
 
           {/* Auth */}
           {!isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                className="hidden text-[13px] font-medium text-zinc-300 transition-colors hover:text-white sm:inline"
-              >
+              <Link to="/login" className="hidden text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline">
                 Đăng nhập
               </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-1.5 rounded-md bg-white px-4 py-2 text-[13px] font-semibold text-[#04101f] transition-colors hover:bg-[var(--color-accent-soft)]"
-              >
-                <span aria-hidden>›</span> Đăng tin
-              </Link>
+              <Button asChild size="sm">
+                <Link to="/register">Đăng tin</Link>
+              </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <NotificationBell />
               <Link
                 to="/me"
-                className="hidden text-[13px] text-zinc-300 transition-colors hover:text-white sm:inline"
+                className="hidden text-[12px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline"
                 title={user?.fullName}
               >
                 {user?.fullName || user?.username}
               </Link>
+              <Link
+                to="/me/payments"
+                className="hidden text-[12px] font-medium text-[var(--color-text-muted)] transition-colors hover:text-black sm:inline"
+              >
+                Thanh toán
+              </Link>
               {isAdmin && (
-                <Link
-                  to="/admin/users"
-                  className="hidden rounded-full border border-[var(--color-line)] px-3 py-1.5 text-[12px] text-zinc-300 transition-colors hover:border-[var(--color-line-strong)] hover:text-white sm:inline"
-                >
-                  Quản trị
-                </Link>
+                <span className="hidden items-center gap-2 sm:inline-flex">
+                  <Link
+                    to="/admin/dashboard"
+                    className="border border-[var(--color-brand)] bg-[var(--color-brand)] px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-[var(--color-brand-strong)]"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/admin/users"
+                    className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+                  >
+                    Users
+                  </Link>
+                  <Link
+                    to="/admin/settings"
+                    className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+                  >
+                    Cài đặt
+                  </Link>
+                </span>
               )}
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLogout}
-                className="hidden text-[13px] text-zinc-400 transition-colors hover:text-white sm:inline"
+                className="hidden text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-danger)] sm:inline"
               >
                 Đăng xuất
-              </button>
+              </Button>
               <Link
                 to="/me"
-                className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] text-[12px] font-bold text-[#04101f]"
+                aria-label="Hồ sơ cá nhân"
+                className="grid h-8 w-8 place-items-center border border-black bg-black text-[11px] font-bold tracking-wide text-white transition-colors hover:bg-[var(--color-brand)] hover:border-[var(--color-brand)]"
               >
                 {initials}
               </Link>
@@ -128,69 +161,86 @@ export default function Navbar() {
           )}
 
           {/* Mobile menu */}
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => setOpen((v) => !v)}
-            className="grid h-9 w-9 place-items-center rounded-md border border-[var(--color-line)] text-zinc-300 md:hidden"
+            className="h-9 w-9 md:hidden"
             aria-label="Menu"
           >
             {open ? '✕' : '☰'}
-          </button>
+          </Button>
         </div>
       </div>
 
       {open && (
-        <div className="border-t border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-4 md:hidden">
+        <div className="animate-fade-up border-t border-[var(--color-line)] bg-white px-4 py-4 md:hidden">
           <form
             onSubmit={onSearch}
-            className="mb-4 flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-surface)]/60 px-3.5 py-2"
+            className="mb-4 flex items-center gap-2 border-b border-[var(--color-line-strong)] px-1 py-2"
           >
-            <span className="text-zinc-500">⌕</span>
-            <input
+            <span aria-hidden className="font-[var(--font-mono)] text-[var(--color-text-dim)]">⌕</span>
+            <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Tìm kiếm sản phẩm..."
-              className="w-full bg-transparent text-[13px] text-white outline-none placeholder:text-zinc-500"
+              placeholder="Tìm kiếm sản phẩm…"
+              className="h-auto w-full border-0 bg-transparent px-0 py-0 text-[13px] shadow-none focus-visible:ring-0"
             />
           </form>
-          <div className="flex flex-col gap-1 text-[14px]">
-            {navLinks.map((l) =>
-              l.to ? (
-                <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-zinc-300 hover:bg-white/5">
-                  {l.label}
-                </Link>
-              ) : (
-                <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-zinc-300 hover:bg-white/5">
-                  {l.label}
-                </a>
-              ),
-            )}
+          <div className="flex flex-col text-[14px]">
+            {navLinks.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => goToSection(l.id)}
+                className="border-b border-[var(--color-line)] py-3 text-left text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)] transition-colors hover:text-black"
+              >
+                {l.label}
+              </button>
+            ))}
             {!isAuthenticated ? (
-              <>
-                <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-white">
+              <div className="mt-4 flex flex-col gap-3">
+                <Link to="/login" onClick={() => setOpen(false)} className="text-center text-[13px] font-bold uppercase tracking-[0.08em] text-black">
                   Đăng nhập
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setOpen(false)}
-                  className="mt-1 rounded-md bg-white px-4 py-2.5 text-center font-semibold text-[#04101f]"
-                >
-                  Đăng tin
-                </Link>
-              </>
+                <Button asChild className="w-full">
+                  <Link to="/register" onClick={() => setOpen(false)}>
+                    Đăng tin
+                  </Link>
+                </Button>
+              </div>
             ) : (
-              <>
-                <Link to="/me" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-white">
+              <div className="mt-4 flex flex-col gap-3">
+                <Link to="/me" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
                   Hồ sơ
                 </Link>
+                <Link to="/me/payments" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                  Thanh toán của tôi
+                </Link>
+                <Link to="/notifications" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                  Thông báo
+                </Link>
                 {isAdmin && (
-                  <Link to="/admin/users" onClick={() => setOpen(false)} className="rounded-md px-2 py-2 text-white">
-                    Quản trị
-                  </Link>
+                  <>
+                    <Link to="/admin/dashboard" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Dashboard
+                    </Link>
+                    <Link to="/admin/users" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Quản trị users
+                    </Link>
+                    <Link to="/admin/settings" onClick={() => setOpen(false)} className="text-[13px] font-bold uppercase tracking-[0.08em] text-black">
+                      Cài đặt hệ thống
+                    </Link>
+                  </>
                 )}
-                <button onClick={handleLogout} className="rounded-md px-2 py-2 text-left text-zinc-400">
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="justify-start px-0 text-left text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--color-danger)] hover:text-[var(--color-danger)]"
+                >
                   Đăng xuất
-                </button>
-              </>
+                </Button>
+              </div>
             )}
           </div>
         </div>
