@@ -49,10 +49,41 @@ public class User : AuditableEntity
     /// <summary>Đếm số lần sai mật khẩu liên tiếp, reset về 0 khi đăng nhập đúng.</summary>
     public int FailedLoginCount { get; set; }
 
-    /// <summary>Khóa tạm thời tự động khi sai mật khẩu quá nhiều. Khác IsActive (Admin khóa).</summary>
+    /// <summary>
+    /// Khóa tạm thời tự động khi sai mật khẩu quá nhiều.
+    /// Khác IsActive (Admin khóa).
+    /// </summary>
     public DateTime? LockoutEnd { get; set; }
 
-    // Navigation
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
-    public ICollection<UserVerificationToken> VerificationTokens { get; set; } = new List<UserVerificationToken>();
+    // Navigation - Authentication
+    public ICollection<RefreshToken> RefreshTokens { get; set; } =
+        new List<RefreshToken>();
+
+    public ICollection<UserVerificationToken> VerificationTokens { get; set; } =
+        new List<UserVerificationToken>();
+
+    // Navigation - Auction
+    public ICollection<Product> Products { get; set; } =
+        new List<Product>();
+
+    public ICollection<Product> ApprovedProducts { get; set; } =
+        new List<Product>();
+
+    public ICollection<Bid> Bids { get; set; } =
+        new List<Bid>();
+
+    public ICollection<AuctionWinner> AuctionWins { get; set; } =
+        new List<AuctionWinner>();
+
+    public ICollection<WatchList> WatchLists { get; set; } =
+        new List<WatchList>();
+
+    public ICollection<Review> Reviews { get; set; } =
+        new List<Review>();
+
+    public ICollection<ReportedProduct> ReportedProducts { get; set; } =
+        new List<ReportedProduct>();
+
+    public ICollection<ReportedProduct> ResolvedReports { get; set; } =
+        new List<ReportedProduct>();
 }
