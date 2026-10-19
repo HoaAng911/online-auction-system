@@ -3,6 +3,7 @@ using backend.Data;
 using backend.Helpers;
 using backend.Middlewares;
 using backend.Models;
+using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ builder.Services.Configure<ApiBehaviorOptions>(o =>
 });
 
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 // CORS cho frontend Vite (mặc định http://localhost:5173).
 builder.Services.AddCors(o => o.AddPolicy("Frontend", p => p
@@ -51,6 +53,8 @@ builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // JWT Authentication (mục 5.4). Secret đọc từ cấu hình, không viết cứng.
 var jwtSecret = builder.Configuration["Jwt:Secret"];
@@ -117,6 +121,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapOpenApi();
 }
 

@@ -1,9 +1,8 @@
-using backend.Data;
 using backend.DTOs.Auth;
 using backend.Helpers;
 using backend.Middlewares;
 using backend.Models;
-using Microsoft.EntityFrameworkCore;
+using backend.Repositories;
 
 namespace backend.Services;
 
@@ -12,14 +11,18 @@ public class AuthService : IAuthService
   private const int MaxFailedLogin = 5;
   private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
-  private readonly AppDbContext _db;
+  private readonly IAuthRepository _authRepository;
   private readonly JwtHelper _jwt;
   private readonly IEmailService _email;
   private readonly IConfiguration _config;
 
-  public AuthService(AppDbContext db, JwtHelper jwt, IEmailService email, IConfiguration config)
+  public AuthService(
+      IAuthRepository authRepository,
+      JwtHelper jwt,
+      IEmailService email,
+      IConfiguration config)
   {
-    _db = db;
+    _authRepository = authRepository;
     _jwt = jwt;
     _email = email;
     _config = config;
@@ -30,9 +33,9 @@ public class AuthService : IAuthService
     var email = dto.Email.Trim().ToLowerInvariant();
     var username = dto.Username.Trim();
 
-    if (await _db.Users.AnyAsync(u => u.Email == email))
+    if (await _authRepository.EmailExistsAsync(email))
       throw new AppException("Email đã được sử dụng", 400);
-    if (await _db.Users.AnyAsync(u => u.Username == username))
+    if (await _authRepository.UsernameExistsAsync(username))
       throw new AppException("Username đã được sử dụng", 400);
 
     var user = new User
@@ -47,7 +50,7 @@ public class AuthService : IAuthService
       IsActive = true,
       IsEmailVerified = false
     };
-    _db.Users.Add(user);
+    _authRepository.AddUser(user);
 
     var verifyToken = new UserVerificationToken
     {
@@ -56,8 +59,8 @@ public class AuthService : IAuthService
       Type = VerificationTokenType.EmailVerify,
       ExpiresAt = DateTime.UtcNow.AddHours(24)
     };
-    _db.UserVerificationTokens.Add(verifyToken);
-    await _db.SaveChangesAsync();
+    _authRepository.AddVerificationToken(verifyToken);
+    await _authRepository.SaveChangesAsync();
 
     await _email.SendVerificationEmailAsync(email, verifyToken.Token);
 
@@ -69,8 +72,7 @@ public class AuthService : IAuthService
     var key = dto.UsernameOrEmail.Trim();
     var keyLower = key.ToLowerInvariant();
 
-    var user = await _db.Users
-        .FirstOrDefaultAsync(u => u.Username == key || u.Email == keyLower);
+    var user = await _authRepository.GetUserForLoginAsync(key, keyLower);
 
     // Thông báo chung để không lộ tài khoản nào tồn tại (mục 7.2).
     if (user is null)
@@ -88,17 +90,16 @@ public class AuthService : IAuthService
         user.LockoutEnd = DateTime.UtcNow.Add(LockoutDuration);
         user.FailedLoginCount = 0;
       }
-      await _db.SaveChangesAsync();
+      await _authRepository.SaveChangesAsync();
       throw new AppException("Sai thông tin đăng nhập", 401);
     }
 
     user.FailedLoginCount = 0;
     user.LockoutEnd = null;
-    await _db.SaveChangesAsync();
+    await _authRepository.SaveChangesAsync();
 
     var now = DateTime.UtcNow;
-    await _db.Users.Where(u => u.Id == user.Id)
-        .ExecuteUpdateAsync(s => s.SetProperty(u => u.LastLoginAt, now));
+    await _authRepository.UpdateLastLoginAsync(user.Id, now);
 
     return await IssueTokensAsync(user, ip);
   }
@@ -108,9 +109,7 @@ public class AuthService : IAuthService
   /// </summary>
   public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken, string? ip)
   {
-    var stored = await _db.RefreshTokens
-        .Include(r => r.User)
-        .FirstOrDefaultAsync(r => r.Token == refreshToken);
+    var stored = await _authRepository.GetRefreshTokenWithUserAsync(refreshToken);
 
     if (stored is null)
       throw new AppException("Refresh token không hợp lệ", 401);
@@ -132,29 +131,27 @@ public class AuthService : IAuthService
 
     stored.IsRevoked = true;
     stored.RevokedAt = DateTime.UtcNow;
-    await _db.SaveChangesAsync();
+    await _authRepository.SaveChangesAsync();
 
     return result;
   }
 
   public async Task LogoutAsync(string refreshToken)
   {
-    var stored = await _db.RefreshTokens
-        .FirstOrDefaultAsync(r => r.Token == refreshToken);
+    var stored = await _authRepository.GetRefreshTokenAsync(refreshToken);
     if (stored is null || stored.IsRevoked) return;
 
     stored.IsRevoked = true;
     stored.RevokedAt = DateTime.UtcNow;
-    await _db.SaveChangesAsync();
+    await _authRepository.SaveChangesAsync();
   }
 
   public async Task VerifyEmailAsync(string token)
   {
-    var stored = await _db.UserVerificationTokens
-        .Include(t => t.User)
-        .FirstOrDefaultAsync(t => t.Token == token
-            && t.Type == VerificationTokenType.EmailVerify
-            && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow);
+    var stored = await _authRepository.GetValidVerificationTokenAsync(
+        token,
+        VerificationTokenType.EmailVerify,
+        DateTime.UtcNow);
 
     if (stored is null)
       throw new AppException("Token xác thực không hợp lệ hoặc đã hết hạn", 400);
@@ -162,20 +159,20 @@ public class AuthService : IAuthService
     stored.IsUsed = true;
     stored.UsedAt = DateTime.UtcNow;
     stored.User.IsEmailVerified = true;
-    await _db.SaveChangesAsync();
+    await _authRepository.SaveChangesAsync();
   }
 
   public async Task ForgotPasswordAsync(string email)
   {
     var normalized = email.Trim().ToLowerInvariant();
-    var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == normalized);
+    var user = await _authRepository.GetUserByEmailAsync(normalized);
 
     // Luôn trả cùng thông báo để không lộ email nào đã đăng ký (mục 4.3).
     if (user is null) return;
 
-    var olds = await _db.UserVerificationTokens
-        .Where(t => t.UserId == user.Id && t.Type == VerificationTokenType.PasswordReset && !t.IsUsed)
-        .ToListAsync();
+    var olds = await _authRepository.GetUnusedVerificationTokensAsync(
+        user.Id,
+        VerificationTokenType.PasswordReset);
     foreach (var o in olds) o.IsUsed = true;
 
     var token = new UserVerificationToken
@@ -185,19 +182,18 @@ public class AuthService : IAuthService
       Type = VerificationTokenType.PasswordReset,
       ExpiresAt = DateTime.UtcNow.AddHours(1)
     };
-    _db.UserVerificationTokens.Add(token);
-    await _db.SaveChangesAsync();
+    _authRepository.AddVerificationToken(token);
+    await _authRepository.SaveChangesAsync();
 
     await _email.SendPasswordResetEmailAsync(user.Email, token.Token);
   }
 
   public async Task ResetPasswordAsync(string token, string newPassword)
   {
-    var stored = await _db.UserVerificationTokens
-        .Include(t => t.User)
-        .FirstOrDefaultAsync(t => t.Token == token
-            && t.Type == VerificationTokenType.PasswordReset
-            && !t.IsUsed && t.ExpiresAt > DateTime.UtcNow);
+    var stored = await _authRepository.GetValidVerificationTokenAsync(
+        token,
+        VerificationTokenType.PasswordReset,
+        DateTime.UtcNow);
 
     if (stored is null)
       throw new AppException("Token đặt lại mật khẩu không hợp lệ hoặc đã hết hạn", 400);
@@ -207,7 +203,7 @@ public class AuthService : IAuthService
     stored.User.PasswordHash = PasswordHelper.Hash(newPassword);
     stored.User.FailedLoginCount = 0;
     stored.User.LockoutEnd = null;
-    await _db.SaveChangesAsync();
+    await _authRepository.SaveChangesAsync();
 
     await RevokeAllUserTokensAsync(stored.UserId);
   }
@@ -224,8 +220,8 @@ public class AuthService : IAuthService
       ExpiresAt = DateTime.UtcNow.AddDays(days),
       CreatedByIp = ip
     };
-    _db.RefreshTokens.Add(refresh);
-    await _db.SaveChangesAsync();
+    _authRepository.AddRefreshToken(refresh);
+    await _authRepository.SaveChangesAsync();
 
     return new AuthResponseDto
     {
@@ -247,10 +243,6 @@ public class AuthService : IAuthService
   private async Task RevokeAllUserTokensAsync(Guid userId)
   {
     var now = DateTime.UtcNow;
-    await _db.RefreshTokens
-        .Where(r => r.UserId == userId && !r.IsRevoked)
-        .ExecuteUpdateAsync(s => s
-            .SetProperty(r => r.IsRevoked, true)
-            .SetProperty(r => r.RevokedAt, now));
+    await _authRepository.RevokeActiveRefreshTokensAsync(userId, now);
   }
 }
